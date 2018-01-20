@@ -30,9 +30,15 @@ public:
 	virtual void read(ne::memory_buffer* buffer);
 
 	void apply_gravity(game_world* world);
+	void jump();
 
 protected:
 
 	game_state* game = nullptr;
+
+	// How many overlapping jumps are ongoing.
+	int current_jumps = 0;
+	float jump_force = 0.0f;
+	const float max_jump_force = 10.0f;
 
 };

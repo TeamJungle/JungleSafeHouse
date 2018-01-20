@@ -5,8 +5,8 @@
 #include <graphics.hpp>
 
 player_object::player_object(game_state* game) : game_object(game) {
-	up_hit = game->input.up_hit.listen([]() {
-		// jump
+	up_hit = game->input.up_hit.listen([this]() {
+		jump();
 	});
 	animation.fps = 30.0f;
 }
