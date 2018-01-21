@@ -1,6 +1,7 @@
 #include "game.hpp"
 #include "assets.hpp"
 #include "player_object.hpp"
+#include "chaser_object.hpp"
 
 #include <graphics.hpp>
 
@@ -13,6 +14,10 @@ game_state::game_state() : world(this) {
 	auto player = world.objects.find<player_object>(0);
 	player->transform.position.y = -200.0f;
 	camera.target = &player->transform;
+
+	world.objects.add(new chaser_object(this));
+	auto chaser = world.objects.find<chaser_object>(1);
+	chaser->transform.position.xy = { -500.0f, -200.0f };
 }
 
 game_state::~game_state() {

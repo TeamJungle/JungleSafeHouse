@@ -3,6 +3,7 @@
 enum class game_object_type {
 	any = -1,
 	player,
+	chaser,
 	total
 };
 
