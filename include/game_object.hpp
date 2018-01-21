@@ -20,8 +20,12 @@ public:
 	game_object(game_state* game) : game(game) {}
 	virtual ~game_object() = default;
 
-	virtual game_object_type type() const {
+	static game_object_type Type() {
 		return game_object_type::any;
+	}
+
+	virtual game_object_type type() const {
+		return Type();
 	}
 
 	virtual void update(game_world* world) = 0;

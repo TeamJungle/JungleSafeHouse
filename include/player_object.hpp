@@ -10,8 +10,12 @@ public:
 	player_object(game_state * game);
 	~player_object() override;
 
-	game_object_type type() const override {
+	static game_object_type Type() {
 		return game_object_type::player;
+	}
+
+	game_object_type type() const override {
+		return Type();
 	}
 
 	virtual void update(game_world* world) override;

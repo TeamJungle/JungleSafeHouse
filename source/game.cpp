@@ -17,7 +17,7 @@ game_state::game_state() : world(this) {
 
 	world.objects.add(new chaser_object(this));
 	auto chaser = world.objects.find<chaser_object>(1);
-	chaser->transform.position.xy = { -500.0f, -200.0f };
+	chaser->transform.position.xy = { -800.0f, -200.0f };
 }
 
 game_state::~game_state() {

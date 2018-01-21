@@ -10,8 +10,12 @@ public:
 	chaser_object(game_state * game);
 	~chaser_object() override;
 
-	game_object_type type() const override {
+	static game_object_type Type() {
 		return game_object_type::chaser;
+	}
+
+	game_object_type type() const override {
+		return Type();
 	}
 
 	virtual void update(game_world* world) override;
@@ -20,4 +24,3 @@ public:
 	virtual void read(ne::memory_buffer* buffer) override;
 
 };
-
