@@ -26,3 +26,5 @@ public:
 	game_input();
 
 };
+
+game_input& input();

@@ -3,6 +3,10 @@
 
 #include "game.hpp"
 #include "assets.hpp"
+#include "move.hpp"
+#include "player_object.hpp"
+#include "chaser_object.hpp"
+#include "terrain_object.hpp"
 
 #include <engine.hpp>
 #include <window.hpp>
@@ -12,15 +16,51 @@ void start() {
 	// Start the game in maximised window mode.
 	ne::maximise_window();
 
-	// Set up some shapes for reuse.
-	ne::create_quad();
-	ne::create_quad();
-
 	// Load all the assets. (blocks)
 	load_assets();
 
+	// Create shapes.
+	still_quad().create();
+	still_quad().make_quad();
+	animated_quad().create();
+	animated_quad().make_quad();
+
+	// Setup chunk sizes.
+	ne::game_world_tile::pixel_size = 16;
+	ne::game_world_chunk::tiles_per_row = 128;
+	ne::game_world_chunk::tiles_per_column = 32;
+
+	// Configure objects.
+	ne::game_object_factory::add_default_component([](ne::game_object* object) {
+		return new game_object_move_component(object);
+	});
+
+	ne::game_object_factory::define(OBJECT_TYPE_PLAYER, [] {
+		return new player_object();
+	}, [](int subtype) {
+		return &textures.objects.player.idle[0];
+	}, [](int subtype) -> std::vector<ne::texture*> {
+		return { nullptr };
+	});
+
+	ne::game_object_factory::define(OBJECT_TYPE_CHASER, [] {
+		return new chaser_object();
+	}, [](int subtype) {
+		return &textures.objects.player.idle[0];
+	}, [](int subtype) -> std::vector<ne::texture*> {
+		return { nullptr };
+	});
+
+	ne::game_object_factory::define(OBJECT_TYPE_TERRAIN, [] {
+		return new terrain_object();
+	}, [](int subtype) {
+		return &textures.blank;
+	}, [](int subtype) -> std::vector<ne::texture*> {
+		return { nullptr };
+	});
+
 	// Turn off VSync.
-	ne::set_swap_interval(NE_SWAP_INTERVAL_IMMEDIATE);
+	ne::set_swap_interval(ne::swap_interval::immediate);
 
 	// Start the game.
 	ne::swap_state<game_state>();

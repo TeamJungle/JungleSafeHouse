@@ -1,34 +1,31 @@
 #include "chaser_object.hpp"
 #include "game.hpp"
 #include "assets.hpp"
+#include "move.hpp"
 
 #include <graphics.hpp>
 
-chaser_object::chaser_object(game_state* game) : game_object(game) {
+chaser_object::chaser_object() {
 	animation.fps = 25.0f;
 }
 
-chaser_object::~chaser_object() {
-	
-}
-
-void chaser_object::update(game_world* world) {
-	game_object::apply_gravity(world);
+void chaser_object::update(ne::game_world* world, ne::game_world_chunk* chunk) {
+	ne::game_object::update(world, chunk);
 	transform.position.x += 4.0f;
 	direction = 1;
-	is_running = true;
+	component<game_object_move_component>()->is_running = true;
 }
 
 void chaser_object::draw() {
 	ne::texture* sprite = &textures.objects.player.idle[direction];
-	if (is_running) {
+	if (component<game_object_move_component>()->is_running) {
 		sprite = &textures.objects.player.run[direction];
 	}
 	transform.scale.xy = {
 		(float)(sprite->size.x / sprite->parameters.frames),
 		(float)sprite->size.y
 	};
-	ne::set_drawing_shape(1);
+	animated_quad().bind();
 	ne::shader::set_transform(&transform);
 	sprite->bind();
 	animation.draw(true);

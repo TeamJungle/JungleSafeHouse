@@ -1,7 +1,7 @@
 #pragma once
 
 #include "game_input.hpp"
-#include "game_world.hpp"
+#include "world.hpp"
 
 #include <engine.hpp>
 #include <camera.hpp>
@@ -13,7 +13,6 @@ class game_state : public ne::program_state {
 public:
 
 	ne::ortho_camera camera;
-	game_input input;
 	game_world world;
 
 	ne::font_text fps_label;
@@ -25,3 +24,6 @@ public:
 	void draw() override;
 
 };
+
+ne::drawing_shape& still_quad();
+ne::drawing_shape& animated_quad();

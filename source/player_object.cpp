@@ -1,49 +1,51 @@
 #include "player_object.hpp"
 #include "game.hpp"
 #include "assets.hpp"
+#include "move.hpp"
 
 #include <graphics.hpp>
 
-player_object::player_object(game_state* game) : game_object(game) {
-	up_hit = game->input.up_hit.listen([this]() {
-		jump();
+player_object::player_object() {
+	up_hit = input().up_hit.listen([this]() {
+		component<game_object_move_component>()->jump();
 	});
 	animation.fps = 30.0f;
 }
 
 player_object::~player_object() {
-	game->input.up_hit.erase(&up_hit);
+	input().up_hit.erase(&up_hit);
 }
 
-void player_object::update(game_world* world) {
-	game_object::apply_gravity(world);
-	is_running = false;
-	bool up = game->input.up.is_active();
-	bool left = game->input.left.is_active();
-	bool down = game->input.down.is_active();
-	bool right = game->input.right.is_active();
+void player_object::update(ne::game_world* world, ne::game_world_chunk* chunk) {
+	ne::game_object::update(world, chunk);
+	auto move = component<game_object_move_component>();
+	move->is_running = false;
+	bool up = input().up.is_active();
+	bool left = input().left.is_active();
+	bool down = input().down.is_active();
+	bool right = input().right.is_active();
 	if (right) {
 		transform.position.x += 5.0f;
 		direction = 1;
-		is_running = true;
+		move->is_running = true;
 	}
 	if (left) {
 		transform.position.x -= 5.0f;
 		direction = 0;
-		is_running = true;
+		move->is_running = true;
 	}
 }
 
 void player_object::draw() {
 	ne::texture* sprite = &textures.objects.player.idle[direction];
-	if (is_running) {
+	if (component<game_object_move_component>()->is_running) {
 		sprite = &textures.objects.player.run[direction];
 	}
 	transform.scale.xy = {
 		(float)(sprite->size.x / sprite->parameters.frames),
 		(float)sprite->size.y
 	};
-	ne::set_drawing_shape(1);
+	animated_quad().bind();
 	ne::shader::set_transform(&transform);
 	sprite->bind();
 	animation.draw(true);

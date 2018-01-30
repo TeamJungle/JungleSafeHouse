@@ -37,3 +37,8 @@ game_input::game_input() {
 	down_hit.add_controller_axis(0, ne::controller_axis::left_y, 8000);
 	right_hit.add_controller_axis(0, ne::controller_axis::left_x, 8000);
 }
+
+game_input& input() {
+	static game_input input;
+	return input;
+}

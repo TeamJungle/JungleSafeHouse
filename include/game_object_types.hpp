@@ -1,13 +1,13 @@
 #pragma once
 
-enum class game_object_type {
-	any = -1,
-	player,
-	chaser,
-	total
+#include <game_object.hpp>
+
+#define OBJECT_TYPE_PLAYER  0
+#define OBJECT_TYPE_CHASER  1
+#define OBJECT_TYPE_TERRAIN 2
+#define TOTAL_OBJECT_TYPES  3
+
+class game_object_definitions : public ne::game_object_definitions {
+public:
+	void initialize();
 };
-
-class game_object;
-class game_state;
-
-game_object* create_object(game_state* game, game_object_type type);

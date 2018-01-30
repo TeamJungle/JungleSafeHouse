@@ -5,19 +5,10 @@
 
 #include <graphics.hpp>
 
-game_state::game_state() : world(this) {
+game_state::game_state() {
 	camera.target_chase_aspect.y = 1.5f;
 	camera.target_chase_speed = { 0.2f, 0.2f };
 	camera.zoom = 2.0f;
-
-	world.objects.add(new player_object(this));
-	auto player = world.objects.find<player_object>(0);
-	player->transform.position.y = -200.0f;
-	camera.target = &player->transform;
-
-	world.objects.add(new chaser_object(this));
-	auto chaser = world.objects.find<chaser_object>(1);
-	chaser->transform.position.xy = { -800.0f, -200.0f };
 }
 
 game_state::~game_state() {
@@ -25,6 +16,7 @@ game_state::~game_state() {
 }
 
 void game_state::update() {
+	camera.target = &world.first<player_object>()->transform;
 	camera.update();
 	world.update();
 	fps_label.font = &fonts.hud;
@@ -39,6 +31,7 @@ void game_state::draw() {
 	view.position.xy = camera.xy();
 	view.scale.xy = camera.size();
 
+	ne::shader::set_color(1.0f, 1.0f, 1.0f, 1.0f);
 	world.draw(view);
 
 	ne::shader::set_color(0.7f, 0.7f, 0.7f, 1.0f);
@@ -47,6 +40,16 @@ void game_state::draw() {
 		view.position.y + 4.0f,
 		0.0f
 	};
-	ne::set_drawing_shape(0);
+	still_quad().bind();
 	fps_label.draw();
+}
+
+ne::drawing_shape& still_quad() {
+	static ne::drawing_shape shape;
+	return shape;
+}
+
+ne::drawing_shape& animated_quad() {
+	static ne::drawing_shape shape;
+	return shape;
 }
