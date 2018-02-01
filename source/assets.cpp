@@ -63,6 +63,13 @@ void texture_assets::initialize() {
 	load({ &objects.player.run[0], "run.png", 12, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
 	load({ &objects.player.run[1], "run.png", 12, TEXTURE_IS_ANIMATED });
 
+
+	group("objects/chaser");
+	//load({ &objects.chaser.idle[0], "idle.png", 1, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
+	//load({ &objects.chaser.idle[1], "idle.png", 1, TEXTURE_IS_ANIMATED });
+	load({ &objects.chaser.run[0], "run.png", 6, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
+	load({ &objects.chaser.run[1], "run.png", 6, TEXTURE_IS_ANIMATED });
+
 	spawn_thread();
 	finish();
 }

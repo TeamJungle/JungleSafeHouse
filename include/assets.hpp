@@ -16,6 +16,10 @@ public:
 			ne::texture idle[2];
 			ne::texture run[2];
 		} player;
+		struct {
+			ne::texture idle[2];
+			ne::texture run[2];
+		} chaser;
 	} objects;
 
 	void initialize();

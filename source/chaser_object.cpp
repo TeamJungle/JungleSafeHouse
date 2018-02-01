@@ -6,7 +6,7 @@
 #include <graphics.hpp>
 
 chaser_object::chaser_object() {
-	animation.fps = 25.0f;
+	animation.fps = 15.0f;
 }
 
 void chaser_object::update(ne::game_world* world, ne::game_world_chunk* chunk) {
@@ -19,7 +19,7 @@ void chaser_object::update(ne::game_world* world, ne::game_world_chunk* chunk) {
 void chaser_object::draw() {
 	ne::texture* sprite = &textures.objects.player.idle[direction];
 	if (component<game_object_move_component>()->is_running) {
-		sprite = &textures.objects.player.run[direction];
+		sprite = &textures.objects.chaser.run[direction];
 	}
 	transform.scale.xy = {
 		(float)(sprite->size.x / sprite->parameters.frames),
