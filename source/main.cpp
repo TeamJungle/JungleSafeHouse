@@ -7,6 +7,7 @@
 #include "player_object.hpp"
 #include "chaser_object.hpp"
 #include "terrain_object.hpp"
+#include "menu.hpp"
 
 #include <engine.hpp>
 #include <window.hpp>
@@ -63,7 +64,7 @@ void start() {
 	ne::set_swap_interval(ne::swap_interval::immediate);
 
 	// Start the game.
-	ne::swap_state<game_state>();
+	ne::swap_state<menu_state>();
 }
 
 void stop() {
