@@ -22,6 +22,11 @@ game_input::game_input() {
 	down.add_key(KEY_S);
 	right.add_key(KEY_D);
 
+	up.add_key(KEY_UP);
+	left.add_key(KEY_LEFT);
+	down.add_key(KEY_DOWN);
+	right.add_key(KEY_RIGHT);
+
 	up.add_controller_axis(0, ne::controller_axis::left_y, -8000);
 	left.add_controller_axis(0, ne::controller_axis::left_x, -8000);
 	down.add_controller_axis(0, ne::controller_axis::left_y, 8000);
@@ -31,6 +36,11 @@ game_input::game_input() {
 	left_hit.add_key(KEY_A, true);
 	down_hit.add_key(KEY_S, true);
 	right_hit.add_key(KEY_D, true);
+
+	up_hit.add_key(KEY_UP, true);
+	left_hit.add_key(KEY_LEFT, true);
+	down_hit.add_key(KEY_DOWN, true);
+	right_hit.add_key(KEY_RIGHT, true);
 
 	up_hit.add_controller_axis(0, ne::controller_axis::left_y, -8000);
 	left_hit.add_controller_axis(0, ne::controller_axis::left_x, -8000);
