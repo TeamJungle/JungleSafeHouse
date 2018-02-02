@@ -9,8 +9,6 @@ class game_state;
 class game_world : public ne::game_world {
 public:
 
-	player_object* player = nullptr;
-
 	game_world();
 
 	void update() override;

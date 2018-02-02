@@ -29,7 +29,7 @@ game_world::game_world() {
 	}
 
 	// Spawn player and chaser.
-	player = (player_object*)spawn(definitions.objects.meta->get_meta(OBJECT_TYPE_PLAYER, 0), { 800.0f, 300.0f });
+	spawn(definitions.objects.meta->get_meta(OBJECT_TYPE_PLAYER, 0), { 800.0f, 300.0f });
 	spawn(definitions.objects.meta->get_meta(OBJECT_TYPE_CHASER, 0), { 100.0f, 300.0f });
 
 	// Spawn the terrain objects.
