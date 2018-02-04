@@ -6,7 +6,7 @@
 #include "move.hpp"
 #include "player_object.hpp"
 #include "chaser_object.hpp"
-#include "terrain_object.hpp"
+#include "decoration_object.hpp"
 #include "menu.hpp"
 
 #include <engine.hpp>
@@ -14,6 +14,9 @@
 #include <graphics.hpp>
 
 void start() {
+	// Black background color.
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
 	// Start the game in maximised window mode.
 	ne::maximise_window();
 
@@ -47,15 +50,15 @@ void start() {
 	ne::game_object_factory::define(OBJECT_TYPE_CHASER, [] {
 		return new chaser_object();
 	}, [](int subtype) {
-		return &textures.objects.player.idle[0];
+		return &textures.objects.chaser.idle[0];
 	}, [](int subtype) -> std::vector<ne::texture*> {
 		return { nullptr };
 	});
 
-	ne::game_object_factory::define(OBJECT_TYPE_TERRAIN, [] {
-		return new terrain_object();
+	ne::game_object_factory::define(OBJECT_TYPE_DECORATION, [] {
+		return new decoration_object();
 	}, [](int subtype) {
-		return &textures.blank;
+		return &textures.objects.decoration[subtype];
 	}, [](int subtype) -> std::vector<ne::texture*> {
 		return { nullptr };
 	});

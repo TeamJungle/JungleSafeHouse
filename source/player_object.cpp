@@ -19,21 +19,11 @@ player_object::~player_object() {
 void player_object::update(ne::game_world* world, ne::game_world_chunk* chunk) {
 	ne::game_object::update(world, chunk);
 	auto move = component<game_object_move_component>();
-	move->is_running = false;
 	bool up = input().up.is_active();
 	bool left = input().left.is_active();
 	bool down = input().down.is_active();
 	bool right = input().right.is_active();
-	if (right) {
-		transform.position.x += 5.0f;
-		direction = 1;
-		move->is_running = true;
-	}
-	if (left) {
-		transform.position.x -= 5.0f;
-		direction = 0;
-		move->is_running = true;
-	}
+	move->move(left, right);
 }
 
 void player_object::draw() {
