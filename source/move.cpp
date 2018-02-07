@@ -30,3 +30,34 @@ void game_object_move_component::jump() {
 	current_jumps++;
 	jump_force = max_jump_force;
 }
+
+void game_object_move_component::move(bool left, bool right) {
+	is_running = false;
+	if (right && left) {
+		return;
+	}
+	if (!right && !left) {
+		if (speed > 0.0f) {
+			speed -= acceleration * 5.0f;
+			if (parent->direction == 1) {
+				right = true;
+			} else if (parent->direction == 0) {
+				left = true;
+			}
+		} else {
+			return;
+		}
+	}
+	is_running = true;
+	if (speed < 5.0f) {
+		speed += acceleration;
+	}
+	if (right) {
+		parent->transform.position.x += speed;
+		parent->direction = 1;
+	}
+	if (left) {
+		parent->transform.position.x -= speed;
+		parent->direction = 0;
+	}
+}

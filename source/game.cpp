@@ -6,8 +6,8 @@
 #include <graphics.hpp>
 
 game_state::game_state() {
-	camera.target_chase_aspect.y = 1.5f;
-	camera.target_chase_speed = { 0.2f, 0.2f };
+	camera.target_chase_aspect.y = 1.75f;
+	camera.target_chase_speed = { 0.15f, 0.025f };
 	camera.zoom = 2.0f;
 }
 
@@ -19,7 +19,7 @@ void game_state::update() {
 	camera.target = &world.first<player_object>()->transform;
 	camera.update();
 	world.update();
-	fps_label.font = &fonts.hud;
+	fps_label.font = &fonts.debug;
 	fps_label.render(STRING("Delta " << ne::delta() << "\nFPS: " << ne::current_fps()));
 }
 
@@ -31,12 +31,12 @@ void game_state::draw() {
 	view.position.xy = camera.xy();
 	view.scale.xy = camera.size();
 
-	ne::shader::set_color(1.0f, 1.0f, 1.0f, 1.0f);
+	ne::shader::set_color(1.0f);
 	world.draw(view);
 
-	ne::shader::set_color(0.7f, 0.7f, 0.7f, 1.0f);
+	ne::shader::set_color(1.0f);
 	fps_label.transform.position = {
-		view.position.x + view.scale.width - 196.0f,
+		view.position.x + view.scale.width - 128.0f,
 		view.position.y + 4.0f,
 		0.0f
 	};

@@ -4,6 +4,9 @@
 
 #include <game_object.hpp>
 
+#define CHASER_TIGER  0
+#define TOTAL_CHASERS 1
+
 class chaser_object : public ne::game_object {
 public:
 

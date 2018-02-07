@@ -1,5 +1,7 @@
 #pragma once
 
+#include "decoration_object.hpp"
+
 #include <asset.hpp>
 
 void load_assets();
@@ -20,7 +22,24 @@ public:
 			ne::texture idle[2];
 			ne::texture run[2];
 		} chaser;
+		ne::texture decoration[TOTAL_DECORATIONS];
 	} objects;
+
+	struct {
+		ne::texture menu;
+		ne::texture popup;
+
+		ne::texture bg;
+		ne::texture bg_back;
+		ne::texture bg_bott;
+		ne::texture bg_far1;
+		ne::texture bg_fog;
+		ne::texture bg_mid;
+		ne::texture bg_top;
+		ne::texture bg_top_lines;
+	} bg;
+
+	ne::texture button;
 
 	void initialize();
 
@@ -30,6 +49,7 @@ class font_assets : public ne::font_group {
 public:
 
 	ne::font hud;
+	ne::font debug;
 
 	void initialize();
 

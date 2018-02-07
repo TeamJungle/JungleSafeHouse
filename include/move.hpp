@@ -16,6 +16,7 @@ public:
 
 	void update(ne::game_world* world, ne::game_world_chunk* chunk) override;
 	void jump();
+	void move(bool left, bool right);
 
 private:
 
@@ -26,5 +27,8 @@ private:
 
 	float jump_force = 0.0f;
 	const float max_jump_force = 10.0f;
+
+	float acceleration = 0.2f;
+	float speed = 0.0f;
 
 };

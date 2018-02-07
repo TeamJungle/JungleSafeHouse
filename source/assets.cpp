@@ -56,6 +56,7 @@ void texture_assets::initialize() {
 
 	load({ &blank, "blank.png" }, false);
 	load({ &nothing, "nothing.png" }, false);
+	load({ &button, "button.png", 3 });
 
 	group("objects/player");
 	load({ &objects.player.idle[0], "idle.png", 1, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
@@ -63,12 +64,28 @@ void texture_assets::initialize() {
 	load({ &objects.player.run[0], "run.png", 12, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
 	load({ &objects.player.run[1], "run.png", 12, TEXTURE_IS_ANIMATED });
 
-
 	group("objects/chaser");
 	//load({ &objects.chaser.idle[0], "idle.png", 1, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
 	//load({ &objects.chaser.idle[1], "idle.png", 1, TEXTURE_IS_ANIMATED });
 	load({ &objects.chaser.run[0], "run.png", 6, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
 	load({ &objects.chaser.run[1], "run.png", 6, TEXTURE_IS_ANIMATED });
+
+	group("objects/decoration");
+	for (int i = 0; i < TOTAL_DECORATIONS; i++) {
+		load({ &objects.decoration[i], STRING(i << ".png") });
+	}
+
+	group("bg");
+	load({ &bg.bg, "bg.png" });
+	load({ &bg.bg_back, "bg_back.png" });
+	load({ &bg.bg_bott, "bg_bott.png" });
+	load({ &bg.bg_far1, "bg_far1.png" });
+	load({ &bg.bg_fog, "bg_fog.png" });
+	load({ &bg.bg_mid, "bg_mid.png" });
+	load({ &bg.bg_top, "bg_top.png" });
+	load({ &bg.bg_top_lines, "bg_top_lines.png" });
+	load({ &bg.menu, "menu.png" });
+	load({ &bg.popup, "popup.png" });
 
 	spawn_thread();
 	finish();
@@ -76,7 +93,8 @@ void texture_assets::initialize() {
 
 void font_assets::initialize() {
 	root("assets/fonts");
-	load({ &hud, "jsh.ttf", 14, false });
+	load({ &hud, "troika.otf", 42, false });
+	load({ &debug, "troika.otf", 16, false });
 }
 
 void shader_assets::initialize() {
