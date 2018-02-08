@@ -15,5 +15,6 @@ public:
 private:
 
 	int up_hit = -1;
+	int down_hit = -1;
 
 };

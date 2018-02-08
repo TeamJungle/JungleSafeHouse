@@ -12,7 +12,7 @@
 #define DECORATION_MUSHROOM_1             5
 #define DECORATION_MUSHROOM_2             6
 #define DECORATION_MUSHROOM_3             7
-#define DEOCRATION_GROUND_MIXED           8
+#define DECORATION_GROUND_MIXED           8
 #define DECORATION_GROUND_GRASS           9
 #define DECORATION_GROUND_STONE           10
 #define DECORATION_GROUND_WATER           11

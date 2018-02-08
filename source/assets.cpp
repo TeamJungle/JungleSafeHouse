@@ -75,6 +75,9 @@ void texture_assets::initialize() {
 		load({ &objects.decoration[i], STRING(i << ".png") });
 	}
 
+	group("objects/slide_under");
+	load({ &objects.slide_under.tree, "tree.png" });
+
 	group("bg");
 	load({ &bg.bg, "bg.png" });
 	load({ &bg.bg_back, "bg_back.png" });

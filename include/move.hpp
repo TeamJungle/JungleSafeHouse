@@ -10,13 +10,17 @@ class game_world;
 class game_object_move_component : public ne::game_object_component {
 public:
 
+	bool is_sliding = false;
 	bool is_running = false;
 
 	game_object_move_component(ne::game_object* parent) : ne::game_object_component(parent) {}
 
 	void update(ne::game_world* world, ne::game_world_chunk* chunk) override;
 	void jump();
+	void slide(int direction);
 	void move(bool left, bool right);
+
+	void stop();
 
 private:
 
@@ -30,5 +34,7 @@ private:
 
 	float acceleration = 0.2f;
 	float speed = 0.0f;
+
+	float slide_left = 0.0f;
 
 };

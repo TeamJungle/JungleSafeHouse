@@ -5,7 +5,7 @@
 #include <game_world.hpp>
 
 void decoration_object::update(ne::game_world* world, ne::game_world_chunk* chunk) {
-	transform.scale.xy = textures.objects.decoration[subtype].size.to<float>() / 5.0f;
+	transform.scale.xy = textures.objects.decoration[subtype].size.to<float>();
 }
 
 void decoration_object::draw() {
