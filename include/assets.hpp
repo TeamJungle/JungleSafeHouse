@@ -17,10 +17,12 @@ public:
 		struct {
 			ne::texture idle[2];
 			ne::texture run[2];
+			ne::texture jump[2];
 		} player;
 		struct {
 			ne::texture idle[2];
 			ne::texture run[2];
+			ne::texture jump[2];
 		} chaser;
 		ne::texture decoration[TOTAL_DECORATIONS];
 		struct {
