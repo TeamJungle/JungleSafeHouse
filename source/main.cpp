@@ -7,6 +7,7 @@
 #include "player_object.hpp"
 #include "chaser_object.hpp"
 #include "decoration_object.hpp"
+#include "slide_under_object.hpp"
 #include "menu.hpp"
 
 #include <engine.hpp>
@@ -30,9 +31,9 @@ void start() {
 	animated_quad().make_quad();
 
 	// Setup chunk sizes.
-	ne::game_world_tile::pixel_size = 16;
-	ne::game_world_chunk::tiles_per_row = 128;
-	ne::game_world_chunk::tiles_per_column = 32;
+	ne::game_world_tile::pixel_size = 1024;
+	ne::game_world_chunk::tiles_per_row = 8;
+	ne::game_world_chunk::tiles_per_column = 4;
 
 	// Configure objects.
 	ne::game_object_factory::add_default_component([](ne::game_object* object) {
@@ -62,6 +63,15 @@ void start() {
 	}, [](int subtype) -> std::vector<ne::texture*> {
 		return { nullptr };
 	});
+
+	ne::game_object_factory::define(OBJECT_TYPE_SLIDE_UNDER, [] {
+		return new slide_under_object();
+	}, [](int subtype) {
+		return &textures.objects.slide_under.tree;
+	}, [](int subtype) -> std::vector<ne::texture*> {
+		return { nullptr };
+	});
+
 
 	// Turn off VSync.
 	ne::set_swap_interval(ne::swap_interval::immediate);

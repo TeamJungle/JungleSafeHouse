@@ -16,7 +16,10 @@ game_state::~game_state() {
 }
 
 void game_state::update() {
-	camera.target = &world.first<player_object>()->transform;
+	auto player = world.first<player_object>();
+	if (player) {
+		camera.target = &player->transform;
+	}
 	camera.update();
 	world.update();
 	fps_label.font = &fonts.debug;
