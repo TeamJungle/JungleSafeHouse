@@ -41,6 +41,9 @@ void player_object::draw() {
 	if (move->is_running || move->is_sliding) {
 		sprite = &textures.objects.player.run[direction];
 	}
+	if (move->is_jumping()) {
+		sprite = &textures.objects.player.jump[direction];
+	}
 	transform.scale.xy = {
 		(float)(sprite->size.x / sprite->parameters.frames),
 		(float)sprite->size.y

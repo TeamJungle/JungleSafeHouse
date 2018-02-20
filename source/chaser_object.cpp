@@ -28,9 +28,13 @@ void chaser_object::update(ne::game_world* world, ne::game_world_chunk* chunk) {
 }
 
 void chaser_object::draw() {
+	auto move = component<game_object_move_component>();
 	ne::texture* sprite = &textures.objects.player.idle[direction];
-	if (component<game_object_move_component>()->is_running) {
+	if (move->is_running) {
 		sprite = &textures.objects.chaser.run[direction];
+	}
+	if (move->is_jumping()) {
+		sprite = &textures.objects.chaser.jump[direction];
 	}
 	transform.scale.xy = {
 		(float)(sprite->size.x / sprite->parameters.frames),
