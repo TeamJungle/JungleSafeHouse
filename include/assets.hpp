@@ -52,6 +52,7 @@ class font_assets : public ne::font_group {
 public:
 
 	ne::font hud;
+	ne::font hud_small;
 	ne::font debug;
 
 	void initialize();

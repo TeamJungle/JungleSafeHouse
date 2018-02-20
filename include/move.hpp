@@ -20,6 +20,8 @@ public:
 	void slide(int direction);
 	void move(bool left, bool right);
 
+	bool is_jumping() const;
+
 	void stop();
 
 private:

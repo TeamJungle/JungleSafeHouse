@@ -45,7 +45,7 @@ game_world::game_world() {
 
 	// Configure foregrounds
 	backgrounds.bottom.zoom = 1.0f;
-	backgrounds.bottom.top_offset.y = 300.0f;
+	backgrounds.bottom.top_offset.y = 400.0f;
 	backgrounds.bottom.bottom_offset.y = 192.0f * 0.75f;
 
 	backgrounds.fog_back.top_offset.y = 250.0f;

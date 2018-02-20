@@ -2,6 +2,7 @@
 #include "game.hpp"
 #include "assets.hpp"
 #include "move.hpp"
+#include "player_object.hpp"
 
 #include <graphics.hpp>
 
@@ -11,6 +12,16 @@ chaser_object::chaser_object() {
 
 void chaser_object::update(ne::game_world* world, ne::game_world_chunk* chunk) {
 	ne::game_object::update(world, chunk);
+	world->each<player_object>([&](player_object* player) {
+		if (player->direction != 0) {
+			return;
+		}
+		auto player_move = player->component<game_object_move_component>();
+		if (player_move->is_jumping()) {
+			auto move = component<game_object_move_component>();
+			move->jump();
+		}
+	});
 	transform.position.x += 4.0f;
 	direction = 1;
 	component<game_object_move_component>()->is_running = true;

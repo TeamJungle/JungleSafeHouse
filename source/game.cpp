@@ -9,6 +9,9 @@ game_state::game_state() {
 	camera.target_chase_aspect.y = 1.75f;
 	camera.target_chase_speed = { 0.15f, 0.025f };
 	camera.zoom = 2.0f;
+	input().pause.listen([this] {
+		pause.active = !pause.active;
+	});
 }
 
 game_state::~game_state() {
@@ -21,7 +24,10 @@ void game_state::update() {
 		camera.target = &player->transform;
 	}
 	camera.update();
-	world.update();
+	pause.update(camera.xy());
+	if (!pause.active) {
+		world.update();
+	}
 	fps_label.font = &fonts.debug;
 	fps_label.render(STRING("Delta " << ne::delta() << "\nFPS: " << ne::current_fps()));
 }
@@ -36,6 +42,8 @@ void game_state::draw() {
 
 	ne::shader::set_color(1.0f);
 	world.draw(view);
+
+	pause.draw(view);
 
 	ne::shader::set_color(1.0f);
 	fps_label.transform.position = {

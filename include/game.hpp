@@ -2,6 +2,7 @@
 
 #include "game_input.hpp"
 #include "world.hpp"
+#include "pause.hpp"
 
 #include <engine.hpp>
 #include <camera.hpp>
@@ -12,6 +13,8 @@ class player_object;
 class game_state : public ne::program_state {
 public:
 
+	pause_menu pause;
+	
 	ne::ortho_camera camera;
 	game_world world;
 

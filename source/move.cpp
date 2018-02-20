@@ -96,6 +96,10 @@ void game_object_move_component::move(bool left, bool right) {
 	}
 }
 
+bool game_object_move_component::is_jumping() const {
+	return current_jumps > 0;
+}
+
 void game_object_move_component::stop() {
 	is_running = false;
 	speed = -1.0f;

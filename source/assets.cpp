@@ -97,6 +97,7 @@ void texture_assets::initialize() {
 void font_assets::initialize() {
 	root("assets/fonts");
 	load({ &hud, "troika.otf", 42, false });
+	load({ &hud_small, "troika.otf", 26, false });
 	load({ &debug, "troika.otf", 16, false });
 }
 
