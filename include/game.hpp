@@ -16,6 +16,7 @@ public:
 	pause_menu pause;
 	
 	ne::ortho_camera camera;
+	ne::ortho_camera ui_camera;
 	game_world world;
 
 	ne::font_text fps_label;

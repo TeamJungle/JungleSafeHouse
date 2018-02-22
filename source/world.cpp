@@ -26,10 +26,11 @@ void game_world::generate() {
 		place_chunk(i, 0);
 	}
 
-	spawn(definitions.objects.meta->get_meta(OBJECT_TYPE_PLAYER, 0), { 800.0f, 500.0f });
-	spawn(definitions.objects.meta->get_meta(OBJECT_TYPE_CHASER, CHASER_TIGER), { 100.0f, 500.0f });
+	spawn(definitions.objects.meta->get_meta(OBJECT_TYPE_PLAYER, 0), { 800.0f, 450.0f });
+	spawn(definitions.objects.meta->get_meta(OBJECT_TYPE_CHASER, CHASER_TIGER), { 50.0f, 450.0f });
 
-	spawn(definitions.objects.meta->get_meta(OBJECT_TYPE_SLIDE_UNDER, 0), { 1500.0f, 450.0f });
+	spawn(definitions.objects.meta->get_meta(OBJECT_TYPE_SLIDE_UNDER, 0), { 3000.0f, 450.0f });
+	spawn(definitions.objects.meta->get_meta(OBJECT_TYPE_SLIDE_UNDER, 0), { 5000.0f, 450.0f });
 }
 
 game_world::game_world() {

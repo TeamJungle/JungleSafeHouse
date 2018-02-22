@@ -8,6 +8,7 @@
 
 chaser_object::chaser_object() {
 	animation.fps = 15.0f;
+	direction = 0;
 }
 
 void chaser_object::update(ne::game_world* world, ne::game_world_chunk* chunk) {
@@ -22,7 +23,7 @@ void chaser_object::update(ne::game_world* world, ne::game_world_chunk* chunk) {
 			move->jump();
 		}
 	});
-	transform.position.x += 4.0f;
+	transform.position.x += 5.0f;
 	direction = 1;
 	component<game_object_move_component>()->is_running = true;
 }

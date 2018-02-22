@@ -20,13 +20,13 @@
 }
 
  void menu_state::update() {
+	 camera.transform.scale.xy = ne::window_size_f();
 	 camera.update();
 	 camera.bind();
-	 menu.update(0.0f, textures.bg.menu.size.to<float>());
+	 menu.update(camera.size(), 0.0f, textures.bg.menu.size.to<float>());
  }
 
  void menu_state::draw() {
-	 camera.transform.scale.xy = ne::window_size_f();
 	 shaders.basic.bind();
 	 camera.bind();
 	 textures.bg.menu.bind();
@@ -35,12 +35,10 @@
 	 ne::shader::set_transform(&bg);
 	 ne::shader::set_color(1.0f);
 	 still_quad().draw();
-	 menu.draw(0.0f, textures.bg.popup.size.to<float>() / 2.0f);
+	 menu.draw(camera.size(), 0.0f, textures.bg.popup.size.to<float>() / 2.0f);
  }
 
-void basic_menu::update(const ne::vector2f& position, const ne::vector2f& size) {
-	ne::ortho_camera* camera = ne::ortho_camera::bound();
-	ne::vector2f camera_size = camera->size();
+void basic_menu::update(const ne::vector2f& camera_size, const ne::vector2f& position, const ne::vector2f& size) {
 	float margin_y = camera_size.height / 2.0f - size.y / 2.0f;
 	for (auto& i : buttons) {
 		i.transform.position.xy = {
@@ -57,9 +55,7 @@ void basic_menu::update(const ne::vector2f& position, const ne::vector2f& size) 
 	}
 }
 
-void basic_menu::draw(const ne::vector2f& position, const ne::vector2f& size) {
-	ne::ortho_camera* camera = ne::ortho_camera::bound();
-	ne::vector2f camera_size = camera->size();
+void basic_menu::draw(const ne::vector2f& camera_size, const ne::vector2f& position, const ne::vector2f& size) {
 	still_quad().bind();
 	ne::shader::set_color(1.0f);
 

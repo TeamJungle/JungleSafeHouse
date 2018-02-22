@@ -74,7 +74,9 @@ void start() {
 
 
 	// Turn off VSync.
+	// TODO: Ensure this is set to 'sync' on releases.
 	ne::set_swap_interval(ne::swap_interval::immediate);
+	//ne::set_swap_interval(ne::swap_interval::sync);
 
 	// Start the game.
 	ne::swap_state<menu_state>();

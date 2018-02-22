@@ -2,29 +2,28 @@
 #include "assets.hpp"
 
 pause_menu::pause_menu() {
-	menu.button_downscale = { 12.0f, 4.0f };
-	menu.font = &fonts.hud_small;
+	menu.font = &fonts.hud;
 	menu.add_button("Resume", [&] {
 		active = false;
 	});
 	menu.add_button("Settings", [] {
 
 	});
-	menu.add_button("Quit", [] {
+	menu.add_button("Main Menu", [] {
 		ne::swap_state<menu_state>();
 	});
 }
 
-void pause_menu::update(const ne::vector2f& position) {
+void pause_menu::update(const ne::vector2f& camera_size) {
 	if (!active) {
 		return;
 	}
-	menu.update(position, { 0.0f, 250.0f });
+	menu.update(camera_size, 0.0f, textures.bg.menu.size.to<float>());
 }
 
-void pause_menu::draw(const ne::transform3f& view) {
+void pause_menu::draw(const ne::vector2f& camera_size) {
 	if (!active) {
 		return;
 	}
-	menu.draw(view.position.xy, { 300.0f, 450.0f });
+	menu.draw(camera_size, 0.0f, textures.bg.popup.size.to<float>() / 2.0f);
 }

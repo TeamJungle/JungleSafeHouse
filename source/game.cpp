@@ -19,12 +19,14 @@ game_state::~game_state() {
 }
 
 void game_state::update() {
+	camera.transform.scale.xy = ne::window_size_f();
+	ui_camera.transform.scale.xy = ne::window_size_f();
 	auto player = world.first<player_object>();
 	if (player) {
 		camera.target = &player->transform;
 	}
 	camera.update();
-	pause.update(camera.xy());
+	pause.update(ui_camera.size());
 	if (!pause.active) {
 		world.update();
 	}
@@ -34,7 +36,6 @@ void game_state::update() {
 
 void game_state::draw() {
 	camera.bind();
-	camera.transform.scale.xy = ne::window_size_f();
 
 	ne::transform3f view;
 	view.position.xy = camera.xy();
@@ -43,14 +44,11 @@ void game_state::draw() {
 	ne::shader::set_color(1.0f);
 	world.draw(view);
 
-	pause.draw(view);
+	ui_camera.bind();
+	pause.draw(ui_camera.size());
 
 	ne::shader::set_color(1.0f);
-	fps_label.transform.position = {
-		view.position.x + view.scale.width - 128.0f,
-		view.position.y + 4.0f,
-		0.0f
-	};
+	fps_label.transform.position.xy = { ui_camera.width() - 128.0f, 4.0f };
 	still_quad().bind();
 	fps_label.draw();
 }

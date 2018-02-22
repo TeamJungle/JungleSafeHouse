@@ -13,6 +13,7 @@ player_object::player_object() {
 		component<game_object_move_component>()->slide(direction);
 	});
 	animation.fps = 30.0f;
+	direction = 0;
 }
 
 player_object::~player_object() {
@@ -38,11 +39,21 @@ void player_object::draw() {
 		transform.rotation.z = 0.0f;
 	}
 	ne::texture* sprite = &textures.objects.player.idle[direction];
+	int old_state = state;
+	state = 0;
 	if (move->is_running || move->is_sliding) {
 		sprite = &textures.objects.player.run[direction];
+		animation.fps = 30.0f;
+		state = 1;
 	}
 	if (move->is_jumping()) {
 		sprite = &textures.objects.player.jump[direction];
+		animation.fps = 14.0f;
+		state = 2;
+	}
+	if (old_state != state) {
+		animation.frame = 0;
+		animation.sub_frame = 0.0f;
 	}
 	transform.scale.xy = {
 		(float)(sprite->size.x / sprite->parameters.frames),
