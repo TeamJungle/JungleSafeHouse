@@ -61,8 +61,8 @@ void texture_assets::initialize() {
 	group("objects/player");
 	load({ &objects.player.idle[0], "idle.png", 1, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
 	load({ &objects.player.idle[1], "idle.png", 1, TEXTURE_IS_ANIMATED });
-	load({ &objects.player.run[0], "run.png", 11, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
-	load({ &objects.player.run[1], "run.png", 11, TEXTURE_IS_ANIMATED });
+	load({ &objects.player.run[0], "run.png", 12, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
+	load({ &objects.player.run[1], "run.png", 12, TEXTURE_IS_ANIMATED });
 	load({ &objects.player.jump[0], "jump.png", 11, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
 	load({ &objects.player.jump[1], "jump.png", 11, TEXTURE_IS_ANIMATED });
 
