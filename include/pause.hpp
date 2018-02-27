@@ -1,6 +1,6 @@
 #pragma once
 
-#include "menu.hpp"
+#include "button_menu.hpp"
 
 class pause_menu {
 public:
@@ -14,6 +14,6 @@ public:
 
 private:
 
-	basic_menu menu;
+	button_menu menu;
 
 };

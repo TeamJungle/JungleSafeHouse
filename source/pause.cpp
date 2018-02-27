@@ -1,13 +1,15 @@
 #include "pause.hpp"
 #include "assets.hpp"
+#include "editor.hpp"
+#include "menu.hpp"
 
 pause_menu::pause_menu() {
 	menu.font = &fonts.hud;
 	menu.add_button("Resume", [&] {
 		active = false;
 	});
-	menu.add_button("Settings", [] {
-
+	menu.add_button("Editor", [] {
+		ne::swap_state<editor_state>();
 	});
 	menu.add_button("Main Menu", [] {
 		ne::swap_state<menu_state>();
