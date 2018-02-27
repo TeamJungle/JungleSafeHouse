@@ -1,6 +1,7 @@
 #pragma once
 
 #include "game_world_background.hpp"
+#include "game_object_types.hpp"
 
 #include <game_world.hpp>
 #include <game_object.hpp>
@@ -26,6 +27,8 @@ public:
 	} backgrounds;
 
 	game_world();
+
+	void generate();
 
 	void update() override;
 	void draw(const ne::transform3f& view) override;

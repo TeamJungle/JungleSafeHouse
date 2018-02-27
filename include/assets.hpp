@@ -23,6 +23,9 @@ public:
 			ne::texture run[2];
 		} chaser;
 		ne::texture decoration[TOTAL_DECORATIONS];
+		struct {
+			ne::texture tree;
+		} slide_under;
 	} objects;
 
 	struct {
