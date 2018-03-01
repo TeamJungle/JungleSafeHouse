@@ -40,6 +40,7 @@ void game_object_definitions::initialize() {
 	define<decoration_object>(DECORATION_PLATFORM_LOG, "Platform log", 0);
 	define<decoration_object>(DECORATION_PLATFORM_BOARD_1, "Platform board (1)", 0);
 	define<decoration_object>(DECORATION_PLATFORM_BOARD_2, "Platform board (2)", 0);
+	define<decoration_object>(DECORATION_PLATFORM_BOARD_3, "Platform board (3)", 0);
 
 	// Items
 	define<item_object>(ITEM_COIN, "Coin", 0);
