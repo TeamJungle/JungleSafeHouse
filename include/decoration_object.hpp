@@ -28,7 +28,8 @@
 #define DECORATION_PLATFORM_LOG           21
 #define DECORATION_PLATFORM_BOARD_1       22
 #define DECORATION_PLATFORM_BOARD_2       23
-#define TOTAL_DECORATIONS                 24
+#define DECORATION_PLATFORM_BOARD_3       24
+#define TOTAL_DECORATIONS                 25
 
 class decoration_object : public ne::game_object {
 public:
