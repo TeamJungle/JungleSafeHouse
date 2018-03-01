@@ -277,6 +277,10 @@ void editor_state::update() {
 			ImGui::Text("Cost: ");
 			ImGui::SameLine();
 			ImGui::InputInt("Cost to open", &door->opening_cost);
+		} else if (selected->type() == OBJECT_TYPE_DECORATION) {
+			auto decoration = (decoration_object*)selected;
+			ImGui::Checkbox("Flip X", &decoration->flip_x);
+			ImGui::Checkbox("Flip Y", &decoration->flip_y);
 		}
 		break;
 	}
