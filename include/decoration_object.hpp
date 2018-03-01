@@ -35,4 +35,7 @@ public:
 
 	NE_OBJECT_TYPE(OBJECT_TYPE_DECORATION, "Decoration", false);
 
+	bool flip_x = false;
+	bool flip_y = false;
+
 };
