@@ -17,7 +17,7 @@
 #define EDITOR_TOOL_PLACE  1
 #define EDITOR_TOOL_REMOVE 2
 
-#define EDITOR_CURRENT_WORLD "worlds/0.world"
+#define EDITOR_CURRENT_WORLD "worlds/1.world"
 
 class editor_state : public ne::program_state {
 public:

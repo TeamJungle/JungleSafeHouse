@@ -34,6 +34,9 @@ void game_object_move_component::apply_gravity(ne::game_world* world) {
 		});
 		if (not_collided) {
 			not_collided = world->each_if<decoration_object>([&](auto platform) {
+				if (platform->collision_transform().scale.width < 1.0f) {
+					return true;
+				}
 				ne::transform3f t = parent->collision_transform();
 				t.position.y -= jump_force;
 				return !platform->collision_transform().collides_with(t);
@@ -56,6 +59,9 @@ void game_object_move_component::apply_gravity(ne::game_world* world) {
 	});
 	if (not_collided) {
 		not_collided = world->each_if<decoration_object>([&](auto platform) {
+			if (platform->collision_transform().scale.width < 1.0f) {
+				return true;
+			}
 			ne::transform3f t = parent->collision_transform();
 			t.position.y += 4.0f;
 			return !platform->collision_transform().collides_with(t);
@@ -126,6 +132,9 @@ void game_object_move_component::move(ne::game_world* world, bool left, bool rig
 	});
 	if (not_collided) {
 		not_collided = world->each_if<decoration_object>([&](auto platform) {
+			if (platform->collision_transform().scale.width < 1.0f) {
+				return true;
+			}
 			ne::transform3f t = parent->collision_transform();
 			t.position.y -= 2.0f;
 			if (right) {
