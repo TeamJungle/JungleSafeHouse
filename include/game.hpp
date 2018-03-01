@@ -10,21 +10,52 @@
 
 class player_object;
 
+struct level_complete_data {
+	int num = 0;
+};
+
+class game_save_data {
+public:
+
+	int32 coins = 0;
+	std::unordered_map<int, level_complete_data> levels_completed;
+
+	void write(ne::memory_buffer* buffer);
+	void read(ne::memory_buffer* buffer);
+
+	bool is_level_completed(int num) const;
+	void complete_level(int num);
+
+};
+
 class game_state : public ne::program_state {
 public:
 
-	pause_menu pause;
-	
-	ne::ortho_camera camera;
-	game_world world;
+	game_save_data save_data;
+	ne::font_text coins_label;
 
-	ne::font_text fps_label;
+	pause_menu pause;
+
+	ne::ortho_camera camera;
+	ne::ortho_camera ui_camera;
+	game_world world;
 
 	game_state();
 	~game_state() override;
 
 	void update() override;
 	void draw() override;
+
+	void save();
+	void load();
+
+private:
+
+	ne::debug_info debug;
+	
+	struct {
+		int pause = -1;
+	} listener;
 
 };
 

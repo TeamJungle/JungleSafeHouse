@@ -1,8 +1,11 @@
 #pragma once
 
 #include "decoration_object.hpp"
+#include "item_object.hpp"
+#include "door_object.hpp"
 
 #include <asset.hpp>
+#include <audio.hpp>
 
 void load_assets();
 void destroy_assets();
@@ -12,12 +15,15 @@ public:
 
 	ne::texture blank;
 	ne::texture nothing;
+	ne::texture button;
+	ne::texture coin;
 
 	struct {
 		struct {
 			ne::texture idle[2];
 			ne::texture run[2];
 			ne::texture jump[2];
+			ne::texture slide[2];
 		} player;
 		struct {
 			ne::texture idle[2];
@@ -25,9 +31,11 @@ public:
 			ne::texture jump[2];
 		} chaser;
 		ne::texture decoration[TOTAL_DECORATIONS];
+		ne::texture item[TOTAL_ITEMS];
 		struct {
-			ne::texture tree;
-		} slide_under;
+			ne::texture open;
+			ne::texture door[TOTAL_DOORS];
+		} door;
 	} objects;
 
 	struct {
@@ -43,8 +51,6 @@ public:
 		ne::texture bg_top;
 		ne::texture bg_top_lines;
 	} bg;
-
-	ne::texture button;
 
 	void initialize();
 
@@ -70,6 +76,25 @@ public:
 
 };
 
+class music_assets : public ne::music_group {
+public:
+
+	ne::music safehouse;
+	ne::music jungle;
+
+	void initialize();
+
+};
+
+class sound_assets : public ne::music_group {
+public:
+
+	ne::sound pickup[5];
+
+	void initialize();
+
+};
+
 texture_assets& _textures();
 #define textures _textures()
 
@@ -78,3 +103,9 @@ font_assets& _fonts();
 
 shader_assets& _shaders();
 #define shaders _shaders()
+
+music_assets& _music();
+#define music _music()
+
+sound_assets& _sounds();
+#define sounds _sounds()

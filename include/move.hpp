@@ -18,7 +18,7 @@ public:
 	void update(ne::game_world* world, ne::game_world_chunk* chunk) override;
 	void jump();
 	void slide(int direction);
-	void move(bool left, bool right);
+	void move(ne::game_world* world, bool left, bool right);
 
 	bool is_jumping() const;
 

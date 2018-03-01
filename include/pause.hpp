@@ -1,6 +1,6 @@
 #pragma once
 
-#include "menu.hpp"
+#include "button_menu.hpp"
 
 class pause_menu {
 public:
@@ -9,11 +9,11 @@ public:
 
 	pause_menu();
 
-	void update(const ne::vector2f& position);
-	void draw(const ne::transform3f& view);
+	void update(const ne::vector2f& camera_size);
+	void draw(const ne::vector2f& camera_size);
 
 private:
 
-	basic_menu menu;
+	button_menu menu;
 
 };
