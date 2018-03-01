@@ -66,7 +66,12 @@ editor_state::editor_state() {
 				object->transform.rotation.z = object_rotation;
 				object->transform.scale.x *= object_scale;
 				object->transform.scale.y *= object_scale;
-				object->collision.size = object->transform.scale.xy;
+				if (object->type() == OBJECT_TYPE_DECORATION) {
+					object->collision.offset = 0.0f;
+					object->collision.size = 0.0f;
+				} else {
+					object->collision.size = object->transform.scale.xy;
+				}
 			}
 			saved = false;
 			break;
