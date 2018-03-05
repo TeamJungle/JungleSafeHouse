@@ -11,6 +11,8 @@ editor_state::editor_state() {
 
 	if (ne::file_exists(EDITOR_CURRENT_WORLD)) {
 		world.load(EDITOR_CURRENT_WORLD);
+	} else {
+		world.level_num = EDITOR_CURRENT_WORLD_NUM;
 	}
 
 	place_meta = world.definitions.objects.meta->get_meta(0, 0);
@@ -66,7 +68,12 @@ editor_state::editor_state() {
 				object->transform.rotation.z = object_rotation;
 				object->transform.scale.x *= object_scale;
 				object->transform.scale.y *= object_scale;
-				object->collision.size = object->transform.scale.xy;
+				if (object->type() == OBJECT_TYPE_DECORATION) {
+					object->collision.offset = 0.0f;
+					object->collision.size = 0.0f;
+				} else {
+					object->collision.size = object->transform.scale.xy;
+				}
 			}
 			saved = false;
 			break;
@@ -180,7 +187,8 @@ void editor_state::update() {
 	ImGui::Image((ImTextureID)textures.blank.id, { 10.0f, 10.0f }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, col_now, col_border);
 	ImGui::Text("Level Number: ");
 	ImGui::SameLine();
-	ImGui::InputInt("Level Number", &world.level_num);
+	//ImGui::InputInt("Level Number", &world.level_num);
+	ImGui::Text(CSTRING(world.level_num));
 #if !DEVELOPMENT_EDITOR
 	// Players should not be able to edit the safehouse or built-in levels.
 	if (world.level_num < 100) {

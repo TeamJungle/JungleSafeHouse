@@ -29,7 +29,10 @@
 #define DECORATION_PLATFORM_BOARD_1       22
 #define DECORATION_PLATFORM_BOARD_2       23
 #define DECORATION_PLATFORM_BOARD_3       24
-#define TOTAL_DECORATIONS                 25
+#define DECORATION_LOG_HOLLOW_FRONT       25
+#define DECORATION_LOG_HOLLOW_BACK        26
+#define DECORATION_SAFEHOUSE_WALL         27
+#define TOTAL_DECORATIONS                 28
 
 class decoration_object : public ne::game_object {
 public:

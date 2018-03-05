@@ -43,7 +43,11 @@ game_state::game_state() {
 
 	// Initialize world.
 	world.save_data = &save_data;
+#if _DEBUG
+	world.load("worlds/local/0.world");
+#else
 	world.load("worlds/0.world");
+#endif
 
 	ne::set_music_volume(10);
 	music.jungle.play();
