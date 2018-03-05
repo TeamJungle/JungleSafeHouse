@@ -2,11 +2,12 @@
 
 #include <engine.hpp>
 
-class asset_container {
-public:
+struct asset_container {
 	texture_assets _textures;
 	font_assets _fonts;
 	shader_assets _shaders;
+	music_assets _music;
+	sound_assets _sounds;
 };
 
 static asset_container* _assets = nullptr;
@@ -21,14 +22,20 @@ void load_assets() {
 	_assets->_textures.initialize();
 	_assets->_fonts.initialize();
 	_assets->_shaders.initialize();
+	_assets->_music.initialize();
+	_assets->_sounds.initialize();
 	// Load all the assets in one go.
 	_assets->_textures.load_all();
 	_assets->_fonts.load_all();
 	_assets->_shaders.load_all();
+	_assets->_music.load_all();
+	_assets->_sounds.load_all();
 	// Process the loaded assets. Textures must be rendered, etc...
 	_assets->_textures.process_some(1000);
 	_assets->_fonts.process_some(1000);
 	_assets->_shaders.process_some(1000);
+	_assets->_music.process_some(1000);
+	_assets->_sounds.process_some(1000);
 }
 
 void destroy_assets() {
@@ -51,32 +58,61 @@ shader_assets& _shaders() {
 	return _assets->_shaders;
 }
 
+music_assets& _music() {
+	return _assets->_music;
+}
+
+sound_assets& _sounds() {
+	return _assets->_sounds;
+}
+
 void texture_assets::initialize() {
+	// To make loading a bit more readable.
+	const int left = (int)ne::direction_side::left;
+	const int right = (int)ne::direction_side::right;
+
 	root("assets/textures");
 
 	load({ &blank, "blank.png" }, false);
 	load({ &nothing, "nothing.png" }, false);
 	load({ &button, "button.png", 3 });
+	load({ &coin, "coin.png" });
 
 	group("objects/player");
-	load({ &objects.player.idle[0], "idle.png", 1, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
-	load({ &objects.player.idle[1], "idle.png", 1, TEXTURE_IS_ANIMATED });
-	load({ &objects.player.run[0], "run.png", 12, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
-	load({ &objects.player.run[1], "run.png", 12, TEXTURE_IS_ANIMATED });
+	load({ &objects.player.idle[left], "idle.png", 1, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
+	load({ &objects.player.idle[right], "idle.png", 1, TEXTURE_IS_ANIMATED });
+	load({ &objects.player.run[left], "run.png", 12, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
+	load({ &objects.player.run[right], "run.png", 12, TEXTURE_IS_ANIMATED });
+	load({ &objects.player.jump[left], "jump.png", 11, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
+	load({ &objects.player.jump[right], "jump.png", 11, TEXTURE_IS_ANIMATED });
+	load({ &objects.player.slide[left], "slide.png", 11, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
+	load({ &objects.player.slide[right], "slide.png", 11, TEXTURE_IS_ANIMATED });
 
 	group("objects/chaser");
-	//load({ &objects.chaser.idle[0], "idle.png", 1, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
-	//load({ &objects.chaser.idle[1], "idle.png", 1, TEXTURE_IS_ANIMATED });
-	load({ &objects.chaser.run[0], "run.png", 6, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
-	load({ &objects.chaser.run[1], "run.png", 6, TEXTURE_IS_ANIMATED });
+	load({ &objects.chaser.idle[left], "idle.png", 1, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
+	load({ &objects.chaser.idle[right], "idle.png", 1, TEXTURE_IS_ANIMATED });
+	load({ &objects.chaser.run[left], "run.png", 6, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
+	load({ &objects.chaser.run[right], "run.png", 6, TEXTURE_IS_ANIMATED });
+	load({ &objects.chaser.jump[left], "jump.png", 7, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
+	load({ &objects.chaser.jump[right], "jump.png", 7, TEXTURE_IS_ANIMATED });
 
 	group("objects/decoration");
 	for (int i = 0; i < TOTAL_DECORATIONS; i++) {
 		load({ &objects.decoration[i], STRING(i << ".png") });
 	}
 
-	group("objects/slide_under");
-	load({ &objects.slide_under.tree, "tree.png" });
+	group("objects/item");
+	load({ &objects.item[ITEM_COIN], "coin.png", 6, TEXTURE_IS_ANIMATED });
+	load({ &objects.item[ITEM_CHERRY], "cherry.png" });
+	load({ &objects.item[ITEM_MANDARIN], "mandarin.png" });
+	load({ &objects.item[ITEM_PEAR], "pear.png" });
+	load({ &objects.item[ITEM_STRAWBERRY], "strawberry.png" });
+
+	group("objects/door");
+	load({ &objects.door.open, "open.png" });
+	for (int i = 0; i < TOTAL_DOORS; i++) {
+		load({ &objects.door.door[i], STRING(i << ".png") });
+	}
 
 	group("bg");
 	load({ &bg.bg, "bg.png" });
@@ -97,10 +133,24 @@ void texture_assets::initialize() {
 void font_assets::initialize() {
 	root("assets/fonts");
 	load({ &hud, "troika.otf", 42, false });
+	load({ &hud_small, "troika.otf", 26, false });
 	load({ &debug, "troika.otf", 16, false });
 }
 
 void shader_assets::initialize() {
 	root("assets/shaders");
 	load({ &basic, "basic" });
+}
+
+void music_assets::initialize() {
+	root("assets/music");
+	load({ &safehouse, "safehouse.ogg", -1 });
+	load({ &jungle, "jungle.ogg", -1 });
+}
+
+void sound_assets::initialize() {
+	root("assets/sounds");
+	for (int i = 0; i < 5; i++) {
+		load({ &pickup[i], STRING("pickup" << i << ".ogg") });
+	}
 }

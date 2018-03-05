@@ -23,10 +23,11 @@
 *.app
 
 # Project
-Project/VisualStudio15/
+project/VisualStudio15/
 
 # Development
-Development/_Noctare_Debug_Log_0.html
-Development/_Noctare_Debug_Log_1.html
-Development/_Noctare_Debug_Log_2.html
-Development/NoctareEngine.dll
+development/_Noctare_Debug_Log_0.html
+development/_Noctare_Debug_Log_1.html
+development/_Noctare_Debug_Log_2.html
+development/NoctareEngine.dll
+development/saves/

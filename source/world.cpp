@@ -2,41 +2,20 @@
 #include "player_object.hpp"
 #include "chaser_object.hpp"
 #include "decoration_object.hpp"
-#include "slide_under_object.hpp"
 #include "assets.hpp"
 #include "game.hpp"
 #include "move.hpp"
 
 #include <graphics.hpp>
 #include <camera.hpp>
-
-// TODO: Relocate this function. Soon this class won't exist anyway.
-void game_object_definitions::initialize() {
-	meta.insert(meta.begin(), TOTAL_OBJECT_TYPES, {});
-	define<player_object>(0, "Player", 0);
-	define<chaser_object>(CHASER_TIGER, "Tiger", 0);
-	for (int i = 0; i < TOTAL_DECORATIONS; i++) {
-		define<decoration_object>(i, STRING("Decoration " << i), 0);
-	}
-	define<slide_under_object>(SLIDE_UNDER_TREE, "Tree (Slide under)", 0);
-}
-
-void game_world::generate() {
-	for (int i = 0; i < 1; i++) {
-		place_chunk(i, 0);
-	}
-
-	spawn(definitions.objects.meta->get_meta(OBJECT_TYPE_PLAYER, 0), { 800.0f, 500.0f });
-	spawn(definitions.objects.meta->get_meta(OBJECT_TYPE_CHASER, CHASER_TIGER), { 100.0f, 500.0f });
-
-	spawn(definitions.objects.meta->get_meta(OBJECT_TYPE_SLIDE_UNDER, 0), { 1500.0f, 450.0f });
-}
+#include <platform.hpp>
 
 game_world::game_world() {
 	definitions.objects.meta = new game_object_definitions();
 	definitions.objects.meta->initialize();
 
-	generate();
+	// Place the only chunk we use.
+	place_chunk(0, 0);
 
 	// Configure backgrounds
 	backgrounds.background.top_offset.y = 200.0f;
@@ -45,7 +24,7 @@ game_world::game_world() {
 
 	// Configure foregrounds
 	backgrounds.bottom.zoom = 1.0f;
-	backgrounds.bottom.top_offset.y = 300.0f;
+	backgrounds.bottom.top_offset.y = 400.0f;
 	backgrounds.bottom.bottom_offset.y = 192.0f * 0.75f;
 
 	backgrounds.fog_back.top_offset.y = 250.0f;
@@ -68,36 +47,112 @@ game_world::game_world() {
 void game_world::update() {
 	update_objects();
 
-	// Kill all players colliding with a chaser.
-	player_object* dead_player = nullptr;
-	each<player_object>([&](player_object* player) {
-		each<chaser_object>([&](chaser_object* chaser) {
-			if (player->transform.collides_with(chaser->transform)) {
-				dead_player = player;
-				ne::ortho_camera::bound()->target = &chaser->transform;
+	// Handle updates which may destroy objects.
+	each_if<player_object>([&](auto player) {
+		// Collect an item if colliding.
+		if (save_data) {
+			each_if<item_object>([&](auto item) {
+				if (!item->collision_transform().collides_with(player->collision_transform())) {
+					return true;
+				}
+				save_data->coins += 5;
+				{
+					static int last_pickup_sound = 0;
+					sounds.pickup[last_pickup_sound].set_volume(1);
+					sounds.pickup[last_pickup_sound].play();
+					last_pickup_sound++;
+					if (last_pickup_sound > 4) {
+						last_pickup_sound = 0;
+					}
+				}
+				destroy_object(item->id, nullptr);
+				return false;
+			});
+		}
+		// Die if colliding with a chaser.
+		return each_if<chaser_object>([&](auto chaser) {
+			if (player->collision_transform().collides_with(chaser->collision_transform())) {
+				destroy_object(player->id, nullptr);
+				return false;
 			}
+			return true;
 		});
 	});
-	if (dead_player) {
-		destroy_object(dead_player->id, nullptr);
+
+	// Change world.
+	if (change_to_level_num >= 0) {
+		std::string path = STRING("worlds/" << change_to_level_num << ".world");
+		if (ne::file_exists(path)) {
+			load(path);
+		} else {
+			ne::show_message("world \"" + path + "\" does not exist.");
+		}
+		change_to_level_num = -1;
 	}
 }
 
 void game_world::draw(const ne::transform3f& view) {
-	// Draw backgrounds.
+	// Backgrounds.
 	backgrounds.background.draw(view, &textures.bg.bg);
 	backgrounds.trees.draw(view, &textures.bg.bg_back);
 	backgrounds.fog_back.draw(view, &textures.bg.bg_fog);
 	backgrounds.mid.draw(view, &textures.bg.bg_mid);
 
-	// Draw objects.
-	each<ne::game_object>([&](ne::game_object* object) {
-		object->draw();
-	});
+	// Objects.
+	draw_objects(view);
 
-	// Draw foregrounds
+	// Foregrounds.
 	backgrounds.bottom.draw(view, &textures.bg.bg_bott);
 	backgrounds.top_lines.draw(view, &textures.bg.bg_top_lines);
 	backgrounds.top.draw(view, &textures.bg.bg_top);
 	backgrounds.fog_front.draw(view, &textures.bg.bg_fog);
+
+	// Collisions.
+	if (draw_collisions) {
+		// Ground.
+		ne::transform3f t;
+		t.position.xy = { view.position.x, ground_y };
+		t.scale.xy = { view.scale.width, 50.0f };
+		ne::shader::set_transform(&t);
+		ne::shader::set_color(1.0f, 1.0f, 1.0f, 0.1f);
+		textures.blank.bind();
+		still_quad().bind();
+		still_quad().draw();
+
+		// Object collisions.
+		ne::shader::set_color(1.0f, 0.2f, 0.2f, 0.2f);
+		for (auto& i : chunks) {
+			i.second.objects.each<ne::game_object>([&](ne::game_object* object) {
+				ne::shader::set_transform(&object->collision_transform());
+				still_quad().draw();
+			});
+		}
+	}
+}
+
+void game_world::write(ne::memory_buffer* buffer) {
+	buffer->write_float(ground_y);
+	buffer->write_int32(level_num);
+}
+
+void game_world::read(ne::memory_buffer* buffer) {
+	ground_y = buffer->read_float();
+	level_num = buffer->read_int32();
+}
+
+void game_world::change(int level_num) {
+	change_to_level_num = level_num;
+}
+
+void game_world::after_load() {
+	if (level_num == 0 && save_data) {
+		// Open the doors for completed levels in the safehouse.
+		for (auto& i : save_data->levels_completed) {
+			each<door_object>([&](auto door) {
+				if (i.first == door->leads_to_level_num) {
+					door->is_open = true;
+				}
+			});
+		}
+	}
 }

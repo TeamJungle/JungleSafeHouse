@@ -2,29 +2,40 @@
 #include "game.hpp"
 #include "assets.hpp"
 #include "move.hpp"
+#include "player_object.hpp"
 
 #include <graphics.hpp>
 
 chaser_object::chaser_object() {
 	animation.fps = 15.0f;
+	side_direction = ne::direction_side::right;
 }
 
 void chaser_object::update(ne::game_world* world, ne::game_world_chunk* chunk) {
 	ne::game_object::update(world, chunk);
-	transform.position.x += 4.0f;
-	direction = 1;
+	world->each<player_object>([&](auto player) {
+		if (player->direction != 0) {
+			return;
+		}
+		auto player_move = player->component<game_object_move_component>();
+		if (player_move->is_jumping()) {
+			auto move = component<game_object_move_component>();
+			move->jump();
+		}
+	});
+	transform.position.x += 5.0f;
 	component<game_object_move_component>()->is_running = true;
 }
 
 void chaser_object::draw() {
-	ne::texture* sprite = &textures.objects.player.idle[direction];
-	if (component<game_object_move_component>()->is_running) {
+	auto move = component<game_object_move_component>();
+	ne::texture* sprite = &textures.objects.chaser.idle[direction];
+	if (move->is_running) {
 		sprite = &textures.objects.chaser.run[direction];
 	}
-	transform.scale.xy = {
-		(float)(sprite->size.x / sprite->parameters.frames),
-		(float)sprite->size.y
-	};
+	if (move->is_jumping()) {
+		sprite = &textures.objects.chaser.jump[direction];
+	}
 	animated_quad().bind();
 	ne::shader::set_transform(&transform);
 	sprite->bind();
@@ -32,9 +43,9 @@ void chaser_object::draw() {
 }
 
 void chaser_object::write(ne::memory_buffer* buffer) {
-
+	ne::game_object::write(buffer);
 }
 
 void chaser_object::read(ne::memory_buffer* buffer) {
-
+	ne::game_object::read(buffer);
 }

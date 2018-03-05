@@ -12,9 +12,13 @@ public:
 	player_object();
 	~player_object() override;
 
+	ne::transform3f collision_transform() override;
+
 private:
 
 	int up_hit = -1;
 	int down_hit = -1;
+	int interact_hit = -1;
+	int state = 0;
 
 };
