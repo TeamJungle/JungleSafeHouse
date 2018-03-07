@@ -17,14 +17,25 @@ struct level_complete_data {
 class game_save_data {
 public:
 
-	int32 coins = 0;
-	std::unordered_map<int, level_complete_data> levels_completed;
-
 	void write(ne::memory_buffer* buffer);
 	void read(ne::memory_buffer* buffer);
 
 	bool is_level_completed(int num) const;
 	void complete_level(int num);
+	void each_completed_level(const std::function<void(int, level_complete_data)>& func);
+	bool is_saved() const;
+	bool must_be_saved() const;
+	void mark_saved();
+
+	void add_coins(int amount);
+	int get_coins() const;
+
+private:
+
+	bool saved = true;
+	bool must_save = false;
+	int32 coins = 0;
+	std::unordered_map<int, level_complete_data> levels_completed;
 
 };
 
@@ -52,6 +63,7 @@ public:
 private:
 
 	ne::debug_info debug;
+	ne::timer autosave_timer;
 	
 	struct {
 		int pause = -1;

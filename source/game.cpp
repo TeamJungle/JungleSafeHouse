@@ -34,6 +34,36 @@ void game_save_data::complete_level(int num) {
 	}
 	levels_completed[num] = { num };
 	coins += 250;
+	saved = false;
+	must_save = true;
+}
+
+void game_save_data::each_completed_level(const std::function<void(int, level_complete_data)>& func) {
+	for (auto& i : levels_completed) {
+		func(i.first, i.second);
+	}
+}
+
+bool game_save_data::is_saved() const {
+	return saved;
+}
+
+bool game_save_data::must_be_saved() const {
+	return must_save;
+}
+
+void game_save_data::mark_saved() {
+	saved = true;
+	must_save = false;
+}
+
+void game_save_data::add_coins(int amount) {
+	coins += amount;
+	saved = false;
+}
+
+int game_save_data::get_coins() const {
+	return coins;
 }
 
 game_state::game_state() {
@@ -42,6 +72,7 @@ game_state::game_state() {
 	camera.zoom = 2.0f;
 
 	// Initialize world.
+	load();
 	world.save_data = &save_data;
 #if _DEBUG
 	world.load("worlds/local/0.world");
@@ -55,6 +86,8 @@ game_state::game_state() {
 	listener.pause = input().pause.listen([this] {
 		pause.active = !pause.active;
 	});
+
+	autosave_timer.start();
 }
 
 game_state::~game_state() {
@@ -79,7 +112,7 @@ void game_state::update() {
 	}
 
 	coins_label.font = &fonts.hud;
-	coins_label.render(STRING(save_data.coins));
+	coins_label.render(STRING(save_data.get_coins()));
 	coins_label.transform.position.x = ui_camera.width() / 2.0f - coins_label.transform.scale.width / 2.0f - textures.coin.size.to<float>().x / 2.0f;
 	coins_label.transform.position.y = 32.0f;
 
@@ -87,6 +120,11 @@ void game_state::update() {
 		"Delta " << ne::delta() << 
 		"\nFPS: " << ne::current_fps()
 	));
+
+	if (autosave_timer.seconds() > 30 || save_data.must_be_saved()) {
+		save();
+		autosave_timer.start();
+	}
 }
 
 void game_state::draw() {
@@ -126,6 +164,7 @@ void game_state::save() {
 	ne::memory_buffer buffer;
 	save_data.write(&buffer);
 	ne::write_file("saves/default.save", buffer.begin, buffer.write_index());
+	save_data.mark_saved();
 }
 
 void game_state::load() {

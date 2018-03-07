@@ -51,11 +51,11 @@ void player_object::update(ne::game_world* world, ne::game_world_chunk* chunk) {
 					w->change(door->leads_to_level_num);
 					return;
 				}
-				if (door->opening_cost > w->save_data->coins) {
+				if (door->opening_cost > w->save_data->get_coins()) {
 					return;
 				}
 				door->is_open = true;
-				w->save_data->coins -= door->opening_cost;
+				w->save_data->add_coins(-door->opening_cost);
 			});
 		});
 	}
