@@ -84,7 +84,11 @@ game_state::game_state() {
 	//music.jungle.play();
 
 	listener.pause = input().pause.listen([this] {
-		pause.active = !pause.active;
+		if (pause.is_open()) {
+			pause.close();
+		} else {
+			pause.open();
+		}
 	});
 
 	autosave_timer.start();
@@ -107,7 +111,7 @@ void game_state::update() {
 	camera.update();
 
 	pause.update(ui_camera.size());
-	if (!pause.active) {
+	if (!pause.is_open()) {
 		world.update();
 	}
 

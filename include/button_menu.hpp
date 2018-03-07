@@ -14,6 +14,9 @@ public:
 
 	void add_button(const std::string& text, const std::function<void()>& action);
 
+	void disable();
+	void enable();
+
 private:
 
 	std::vector<ne::ui_button> buttons;
