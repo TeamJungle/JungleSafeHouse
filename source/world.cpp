@@ -82,7 +82,11 @@ void game_world::update() {
 
 	// Change world.
 	if (change_to_level_num >= 0) {
+#if _DEBUG
+		std::string path = STRING("worlds/local/" << change_to_level_num << ".world");
+#else
 		std::string path = STRING("worlds/" << change_to_level_num << ".world");
+#endif
 		if (ne::file_exists(path)) {
 			load(path);
 		} else {
