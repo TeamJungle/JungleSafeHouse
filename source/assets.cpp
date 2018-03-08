@@ -87,6 +87,8 @@ void texture_assets::initialize() {
 	load({ &objects.player.jump[right], "jump.png", 11, TEXTURE_IS_ANIMATED });
 	load({ &objects.player.slide[left], "slide.png", 11, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
 	load({ &objects.player.slide[right], "slide.png", 11, TEXTURE_IS_ANIMATED });
+	load({ &objects.player.flip[left], "flip.png", 8, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
+	load({ &objects.player.flip[right], "flip.png", 8, TEXTURE_IS_ANIMATED });
 
 	group("objects/chaser");
 	load({ &objects.chaser.idle[left], "idle.png", 1, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
