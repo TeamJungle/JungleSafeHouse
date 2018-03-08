@@ -17,20 +17,29 @@ void chaser_object::update(ne::game_world* world, ne::game_world_chunk* chunk) {
 	bool right = (side_direction == ne::direction_side::right);
 	bool left = !right;
 	auto move = component<game_object_move_component>();
+	auto this_collision = collision_transform();
 	move->is_running = true;
-	world->each<player_object>([&](auto player) {
-		if (player->side_direction == ne::direction_side::right) {
-			return;
-		}
+	move->max_jump_force = 12.0f;
+	auto player = world->first<player_object>();
+	if (player) {
 		auto player_move = player->component<game_object_move_component>();
-		if (player_move->is_jumping()) {
+		auto player_collision = player->collision_transform();
+		if (player->side_direction == ne::direction_side::left && player_move->is_jumping()) {
 			move->jump();
 		}
-	});
-	auto col_transform = collision_transform();
-	col_transform.position.x += 20.0f * (right ? 1.0f : -1.0f);
+		if (player_collision.position.x + player_collision.scale.width > this_collision.position.x) {
+			side_direction = ne::direction_side::right;
+			right = true;
+			left = false;
+		} else {
+			side_direction = ne::direction_side::left;
+			right = false;
+			left = true;
+		}
+	}
+	this_collision.position.x += 30.0f * (right ? 1.0f : -1.0f);
 	world->each_if<decoration_object>([&](auto decoration) {
-		if (decoration->collision_transform().collides_with(col_transform)) {
+		if (decoration->collision_transform().collides_with(this_collision)) {
 			move->jump();
 			return true;
 		}

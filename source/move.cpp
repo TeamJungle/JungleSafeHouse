@@ -80,8 +80,7 @@ void game_object_move_component::jump() {
 	if (is_sliding) {
 		return;
 	}
-	// NOTE: Make this check more flexible in the future to allow for multijumps.
-	if (current_jumps > 1) {
+	if (current_jumps > max_double_jumps) {
 		return;
 	}
 	current_jumps++;
