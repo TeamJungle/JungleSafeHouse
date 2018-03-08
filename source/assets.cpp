@@ -83,8 +83,8 @@ void texture_assets::initialize() {
 	load({ &objects.player.idle[right], "idle.png", 1, TEXTURE_IS_ANIMATED });
 	load({ &objects.player.run[left], "run.png", 12, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
 	load({ &objects.player.run[right], "run.png", 12, TEXTURE_IS_ANIMATED });
-	load({ &objects.player.jump[left], "jump.png", 11, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
-	load({ &objects.player.jump[right], "jump.png", 11, TEXTURE_IS_ANIMATED });
+	load({ &objects.player.jump[left], "jump.png", 8, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
+	load({ &objects.player.jump[right], "jump.png", 8, TEXTURE_IS_ANIMATED });
 	load({ &objects.player.slide[left], "slide.png", 11, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
 	load({ &objects.player.slide[right], "slide.png", 11, TEXTURE_IS_ANIMATED });
 
@@ -93,8 +93,8 @@ void texture_assets::initialize() {
 	load({ &objects.chaser.idle[right], "idle.png", 1, TEXTURE_IS_ANIMATED });
 	load({ &objects.chaser.run[left], "run.png", 6, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
 	load({ &objects.chaser.run[right], "run.png", 6, TEXTURE_IS_ANIMATED });
-	load({ &objects.chaser.jump[left], "jump.png", 7, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
-	load({ &objects.chaser.jump[right], "jump.png", 7, TEXTURE_IS_ANIMATED });
+	load({ &objects.chaser.jump[left], "jump.png", 8, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
+	load({ &objects.chaser.jump[right], "jump.png", 8, TEXTURE_IS_ANIMATED });
 
 	group("objects/decoration");
 	for (int i = 0; i < TOTAL_DECORATIONS; i++) {

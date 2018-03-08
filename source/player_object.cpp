@@ -89,7 +89,7 @@ void player_object::draw() {
 	}
 	if (move->is_jumping()) {
 		sprite = &textures.objects.player.jump[direction];
-		animation.fps = 14.0f;
+		animation.fps = 18.0f;
 		state = 3;
 	}
 	if (old_state != state) {
