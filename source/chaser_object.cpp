@@ -10,6 +10,8 @@
 chaser_object::chaser_object() {
 	animation.fps = 15.0f;
 	side_direction = ne::direction_side::right;
+	collision.offset = { 15, 20 };
+	collision.size = { 80, 30 };
 }
 
 void chaser_object::update(ne::game_world* world, ne::game_world_chunk* chunk) {
