@@ -9,7 +9,6 @@ void decoration_object::update(ne::game_world* world, ne::game_world_chunk* chun
 }
 
 void decoration_object::draw() {
-	ne::shader::set_color(1.0f);
 	ne::transform3f draw_transform = transform;
 	if (flip_x) {
 		draw_transform.position.x += draw_transform.scale.width;

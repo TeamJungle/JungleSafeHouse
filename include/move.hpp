@@ -12,13 +12,15 @@ public:
 
 	bool is_sliding = false;
 	bool is_running = false;
+	int max_double_jumps = 1;
+	float max_jump_force = 10.0f;
 
 	game_object_move_component(ne::game_object* parent) : ne::game_object_component(parent) {}
 
 	void update(ne::game_world* world, ne::game_world_chunk* chunk) override;
 	void jump();
 	void slide(int direction);
-	void move(ne::game_world* world, bool left, bool right);
+	bool move(ne::game_world* world, bool left, bool right);
 
 	bool is_jumping() const;
 
@@ -32,7 +34,6 @@ private:
 	int current_jumps = 0;
 
 	float jump_force = 0.0f;
-	const float max_jump_force = 10.0f;
 
 	float acceleration = 0.2f;
 	float speed = 0.0f;
