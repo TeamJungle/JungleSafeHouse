@@ -48,6 +48,8 @@ void game_object_move_component::apply_gravity(ne::game_world* world) {
 			if (jump_force < 0.0f) {
 				jump_force = 0.0f;
 			}
+		} else {
+			jump_force = 0.0f;
 		}
 	}
 	int limit = 0;
