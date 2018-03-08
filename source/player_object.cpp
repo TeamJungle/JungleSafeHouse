@@ -8,6 +8,8 @@
 player_object::player_object() {
 	animation.fps = 30.0f;
 	side_direction = ne::direction_side::right;
+	collision.offset = { 20, 10 };
+	collision.size = { 30, 60 };
 }
 
 player_object::~player_object() {
