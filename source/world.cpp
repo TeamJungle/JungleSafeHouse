@@ -55,7 +55,8 @@ void game_world::update() {
 				if (!item->collision_transform().collides_with(player->collision_transform())) {
 					return true;
 				}
-				save_data->coins += 5;
+				save_data->add_coins(5);
+				// TODO: Clean.
 				{
 					static int last_pickup_sound = 0;
 					sounds.pickup[last_pickup_sound].set_volume(1);
@@ -81,7 +82,11 @@ void game_world::update() {
 
 	// Change world.
 	if (change_to_level_num >= 0) {
+#if _DEBUG
+		std::string path = STRING("worlds/local/" << change_to_level_num << ".world");
+#else
 		std::string path = STRING("worlds/" << change_to_level_num << ".world");
+#endif
 		if (ne::file_exists(path)) {
 			load(path);
 		} else {
@@ -147,12 +152,12 @@ void game_world::change(int level_num) {
 void game_world::after_load() {
 	if (level_num == 0 && save_data) {
 		// Open the doors for completed levels in the safehouse.
-		for (auto& i : save_data->levels_completed) {
+		save_data->each_completed_level([&](int key, level_complete_data complete_data) {
 			each<door_object>([&](auto door) {
-				if (i.first == door->leads_to_level_num) {
+				if (key == door->leads_to_level_num) {
 					door->is_open = true;
 				}
 			});
-		}
+		});
 	}
 }

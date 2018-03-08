@@ -80,8 +80,7 @@ void game_object_move_component::jump() {
 	if (is_sliding) {
 		return;
 	}
-	// NOTE: Make this check more flexible in the future to allow for multijumps.
-	if (current_jumps > 1) {
+	if (current_jumps > max_double_jumps) {
 		return;
 	}
 	current_jumps++;
@@ -99,10 +98,10 @@ void game_object_move_component::slide(int direction) {
 	slide_left = 350.0f * (direction == 1 ? 1.0f : -1.0f);
 }
 
-void game_object_move_component::move(ne::game_world* world, bool left, bool right) {
+bool game_object_move_component::move(ne::game_world* world, bool left, bool right) {
 	is_running = false;
 	if (right && left) {
-		return;
+		return false;
 	}
 	if (!right && !left) {
 		if (speed > 0.0f) {
@@ -113,7 +112,7 @@ void game_object_move_component::move(ne::game_world* world, bool left, bool rig
 				left = true;
 			}
 		} else {
-			return;
+			return false;
 		}
 	}
 	is_running = true;
@@ -157,6 +156,7 @@ void game_object_move_component::move(ne::game_world* world, bool left, bool rig
 		}
 		parent->side_direction = ne::direction_side::left;
 	}
+	return not_collided;
 }
 
 bool game_object_move_component::is_jumping() const {

@@ -49,3 +49,15 @@ void button_menu::add_button(const std::string& text, const std::function<void()
 	buttons.back().label_shape = &still_quad();
 	buttons.back().click.listen(action);
 }
+
+void button_menu::disable() {
+	for (auto& i : buttons) {
+		i.click.is_enabled = false;
+	}
+}
+
+void button_menu::enable() {
+	for (auto& i : buttons) {
+		i.click.is_enabled = true;
+	}
+}

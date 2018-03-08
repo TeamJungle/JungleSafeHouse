@@ -9,16 +9,24 @@ void door_object::update(ne::game_world* world, ne::game_world_chunk* chunk) {
 }
 
 void door_object::draw() {
-	ne::shader::set_color(1.0f);
 	ne::shader::set_transform(&transform);
 	if (is_open) {
 		textures.objects.door.open.bind();
 	} else {
 		textures.objects.door.door[subtype].bind();
 	}
-	animated_quad().bind();
-	animation.fps = 9.0f;
-	animation.draw(true);
+	still_quad().bind();
+	still_quad().draw();
+	if (leads_to_level_num < 1 || is_open) {
+		return;
+	}
+	label.font = &fonts.hud;
+	label.render(std::to_string(leads_to_level_num));
+	label.transform.position.x = transform.position.x + transform.scale.width / 2.0f - label.transform.scale.width / 2.0f;
+	label.transform.position.y = transform.position.y + transform.scale.height / 2.0f - label.transform.scale.height / 6.0f;
+	ne::shader::set_color(1.0f, 0.4f, 0.1f, 0.7f);
+	label.draw();
+	ne::shader::set_color(1.0f);
 }
 
 void door_object::write(ne::memory_buffer* buffer) {

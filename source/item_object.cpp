@@ -10,7 +10,6 @@ void item_object::update(ne::game_world* world, ne::game_world_chunk* chunk) {
 }
 
 void item_object::draw() {
-	ne::shader::set_color(1.0f);
 	ne::shader::set_transform(&transform);
 	textures.objects.item[subtype].bind();
 	animated_quad().bind();

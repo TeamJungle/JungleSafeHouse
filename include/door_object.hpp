@@ -18,4 +18,8 @@ public:
 	int leads_to_level_num = 0;
 	int opening_cost = 0;
 
+private:
+
+	ne::font_text label;
+
 };
