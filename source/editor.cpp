@@ -72,7 +72,9 @@ editor_state::editor_state() {
 					object->collision.offset = 0.0f;
 					object->collision.size = 0.0f;
 				} else {
-					object->collision.size = object->transform.scale.xy;
+					if (object->type() != OBJECT_TYPE_PLAYER && object->type() != OBJECT_TYPE_CHASER) {
+						object->collision.size = object->transform.scale.xy;
+					}
 				}
 			}
 			saved = false;
