@@ -32,7 +32,8 @@
 #define DECORATION_LOG_HOLLOW_FRONT       25
 #define DECORATION_LOG_HOLLOW_BACK        26
 #define DECORATION_SAFEHOUSE_WALL         27
-#define TOTAL_DECORATIONS                 28
+#define DECORATION_TUTORIAL_ROCK          28
+#define TOTAL_DECORATIONS                 29
 
 class decoration_object : public ne::game_object {
 public:
