@@ -18,7 +18,7 @@
 #define EDITOR_TOOL_REMOVE 2
 
 // Change this number to the world you want to edit.
-#define EDITOR_CURRENT_WORLD_NUM 2
+#define EDITOR_CURRENT_WORLD_NUM 5
 
 #define EDITOR_CURRENT_WORLD STRING("worlds/local/" << EDITOR_CURRENT_WORLD_NUM << ".world")
 
