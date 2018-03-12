@@ -24,6 +24,7 @@ public:
 			ne::texture run[2];
 			ne::texture jump[2];
 			ne::texture slide[2];
+			ne::texture flip[2];
 		} player;
 		struct {
 			ne::texture idle[2];
