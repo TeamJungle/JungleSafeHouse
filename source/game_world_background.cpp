@@ -2,6 +2,9 @@
 #include "game.hpp"
 
 void game_world_background::draw(const ne::transform3f& view, ne::texture* texture) const {
+	if (!is_visible) {
+		return;
+	}
 	assert(texture);
 	ne::transform3f transform;
 	transform.scale.xy = texture->size.to<float>() * zoom;

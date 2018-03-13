@@ -3,6 +3,8 @@
 #include "decoration_object.hpp"
 #include "item_object.hpp"
 #include "door_object.hpp"
+#include "spikes_object.hpp"
+#include "npc_object.hpp"
 
 #include <asset.hpp>
 #include <audio.hpp>
@@ -17,6 +19,7 @@ public:
 	ne::texture nothing;
 	ne::texture button;
 	ne::texture coin;
+	ne::texture machete;
 
 	struct {
 		struct {
@@ -25,7 +28,7 @@ public:
 			ne::texture jump[2];
 			ne::texture slide[2];
 			ne::texture flip[2];
-		} player;
+		} player, machete;
 		struct {
 			ne::texture idle[2];
 			ne::texture run[2];
@@ -37,11 +40,14 @@ public:
 			ne::texture open;
 			ne::texture door[TOTAL_DOORS];
 		} door;
+		ne::texture spikes[TOTAL_SPIKES];
+		ne::texture npc[TOTAL_NPCS];
 	} objects;
 
 	struct {
 		ne::texture menu;
 		ne::texture popup;
+		ne::texture shop;
 
 		ne::texture bg;
 		ne::texture bg_back;
@@ -62,6 +68,7 @@ public:
 
 	ne::font hud;
 	ne::font hud_small;
+	ne::font shop_price;
 	ne::font debug;
 
 	void initialize();
@@ -72,6 +79,7 @@ class shader_assets : public ne::shader_group {
 public:
 
 	ne::shader basic;
+	ne::shader light;
 
 	void initialize();
 

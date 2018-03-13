@@ -5,6 +5,8 @@
 #include "item_object.hpp"
 #include "platform_object.hpp"
 #include "door_object.hpp"
+#include "spikes_object.hpp"
+#include "npc_object.hpp"
 
 void game_object_definitions::initialize() {
 	meta.insert(meta.begin(), TOTAL_OBJECT_TYPES, {});
@@ -61,6 +63,13 @@ void game_object_definitions::initialize() {
 	define<door_object>(DOOR_YELLOW, "Yellow door", 0);
 	define<door_object>(DOOR_RED, "Red door", 0);
 
+	// Spikes
+	define<spikes_object>(SPIKES_1, "Spikes (1)", 0);
+	define<spikes_object>(SPIKES_2, "Spikes (2)", 0);
+
+	// NPCs
+	define<npc_object>(NPC_MONKEY, "Monkey", 0);
+
 	// Put into categories
 	categories.push_back("Player");
 	categories.push_back("Chaser");
@@ -68,6 +77,8 @@ void game_object_definitions::initialize() {
 	categories.push_back("Item");
 	categories.push_back("Platform");
 	categories.push_back("Door");
+	categories.push_back("Spikes");
+	categories.push_back("NPCs");
 	category_objects[OBJECT_TYPE_PLAYER].push_back({ OBJECT_TYPE_PLAYER, 0 });
 	for (int i = 0; i < TOTAL_CHASERS; i++) {
 		category_objects[OBJECT_TYPE_CHASER].push_back({ OBJECT_TYPE_CHASER, i });
@@ -81,5 +92,11 @@ void game_object_definitions::initialize() {
 	category_objects[OBJECT_TYPE_PLATFORM].push_back({ OBJECT_TYPE_PLATFORM, 0 });
 	for (int i = 0; i < TOTAL_DOORS; i++) {
 		category_objects[OBJECT_TYPE_DOOR].push_back({ OBJECT_TYPE_DOOR, i });
+	}
+	for (int i = 0; i < TOTAL_SPIKES; i++) {
+		category_objects[OBJECT_TYPE_SPIKES].push_back({ OBJECT_TYPE_SPIKES, i });
+	}
+	for (int i = 0; i < TOTAL_NPCS; i++) {
+		category_objects[OBJECT_TYPE_NPC].push_back({ OBJECT_TYPE_NPC, i });
 	}
 }

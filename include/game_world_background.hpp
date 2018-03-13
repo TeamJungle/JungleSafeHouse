@@ -7,6 +7,8 @@
 class game_world_background {
 public:
 
+	bool is_visible = true;
+
 	// Used with sin() to make some slight varying movement.
 	ne::timer timer;
 	float speed = 1000.0f;

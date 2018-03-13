@@ -18,7 +18,7 @@
 #define EDITOR_TOOL_REMOVE 2
 
 // Change this number to the world you want to edit.
-#define EDITOR_CURRENT_WORLD_NUM 2
+#define EDITOR_CURRENT_WORLD_NUM 0
 
 #define EDITOR_CURRENT_WORLD STRING("worlds/local/" << EDITOR_CURRENT_WORLD_NUM << ".world")
 
@@ -48,9 +48,24 @@ private:
 	ne::transform3f left_panel;
 	bool any_context_open = false;
 
+	struct {
+		bool is_dragging = false;
+		ne::vector2f offset;
+		ne::vector2f old_position;
+		ne::vector2f new_position;
+	} drag;
+	void start_drag();
+
+	struct {
+		bool is_open = false;
+		std::vector<ne::game_object*> objects;
+	} select_object_popup;
+
 	int key_listener = -1;
 	int click_listener = -1;
 	int wheel_listener = -1;
+
+	ne::vector2i grid = 8;
 
 	ne::debug_info debug;
 

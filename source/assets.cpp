@@ -77,6 +77,7 @@ void texture_assets::initialize() {
 	load({ &nothing, "nothing.png" }, false);
 	load({ &button, "button.png", 3 });
 	load({ &coin, "coin.png" });
+	load({ &machete, "machete.png" });
 
 	group("objects/player");
 	load({ &objects.player.idle[left], "idle.png", 1, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
@@ -89,6 +90,19 @@ void texture_assets::initialize() {
 	load({ &objects.player.slide[right], "slide.png", 11, TEXTURE_IS_ANIMATED });
 	load({ &objects.player.flip[left], "flip.png", 8, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
 	load({ &objects.player.flip[right], "flip.png", 8, TEXTURE_IS_ANIMATED });
+
+	group("objects/player/machete");
+	load({ &objects.machete.idle[left], "idle.png", 1, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
+	load({ &objects.machete.idle[right], "idle.png", 1, TEXTURE_IS_ANIMATED });
+	load({ &objects.machete.run[left], "run.png", 12, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
+	load({ &objects.machete.run[right], "run.png", 12, TEXTURE_IS_ANIMATED });
+	load({ &objects.machete.jump[left], "jump.png", 11, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
+	load({ &objects.machete.jump[right], "jump.png", 11, TEXTURE_IS_ANIMATED });
+	load({ &objects.machete.slide[left], "slide.png", 11, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
+	load({ &objects.machete.slide[right], "slide.png", 11, TEXTURE_IS_ANIMATED });
+	// TODO: Flip animation for machete.
+	load({ &objects.machete.flip[left], "jump.png", 11, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
+	load({ &objects.machete.flip[right], "jump.png", 11, TEXTURE_IS_ANIMATED });
 
 	group("objects/chaser");
 	load({ &objects.chaser.idle[left], "idle.png", 1, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
@@ -116,6 +130,14 @@ void texture_assets::initialize() {
 		load({ &objects.door.door[i], STRING(i << ".png") });
 	}
 
+	group("objects/spikes");
+	for (int i = 0; i < TOTAL_SPIKES; i++) {
+		load({ &objects.spikes[i], STRING(i << ".png") });
+	}
+
+	group("objects/npc");
+	load({ &objects.npc[NPC_MONKEY], "monkey.png", 3 });
+
 	group("bg");
 	load({ &bg.bg, "bg.png" });
 	load({ &bg.bg_back, "bg_back.png" });
@@ -127,6 +149,7 @@ void texture_assets::initialize() {
 	load({ &bg.bg_top_lines, "bg_top_lines.png" });
 	load({ &bg.menu, "menu.png" });
 	load({ &bg.popup, "popup.png" });
+	load({ &bg.shop, "shop.png" });
 
 	spawn_thread();
 	finish();
@@ -136,12 +159,14 @@ void font_assets::initialize() {
 	root("assets/fonts");
 	load({ &hud, "troika.otf", 42, false });
 	load({ &hud_small, "troika.otf", 26, false });
+	load({ &shop_price, "troika.otf", 20, false });
 	load({ &debug, "troika.otf", 16, false });
 }
 
 void shader_assets::initialize() {
 	root("assets/shaders");
 	load({ &basic, "basic" });
+	load({ &light, "light" });
 }
 
 void music_assets::initialize() {

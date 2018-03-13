@@ -8,7 +8,9 @@
 #define OBJECT_TYPE_ITEM        3
 #define OBJECT_TYPE_PLATFORM    4
 #define OBJECT_TYPE_DOOR        5
-#define TOTAL_OBJECT_TYPES      6
+#define OBJECT_TYPE_SPIKES      6
+#define OBJECT_TYPE_NPC         7
+#define TOTAL_OBJECT_TYPES      8
 
 class game_object_definitions : public ne::game_object_definitions {
 public:

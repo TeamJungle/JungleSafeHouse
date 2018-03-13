@@ -8,6 +8,9 @@
 	menu.add_button("Play", [] {
 		ne::swap_state<game_state>();
 	});
+	menu.add_button("Settings", [] {
+
+	});
 	menu.add_button("Editor", [] {
 		ne::swap_state<editor_state>();
 	});
@@ -38,5 +41,5 @@
 	ne::shader::set_transform(&bg);
 	ne::shader::set_color(1.0f);
 	still_quad().draw();
-	menu.draw(camera.size(), 0.0f, textures.bg.popup.size.to<float>() / 2.0f);
+	menu.draw(camera.size(), { 0.0f, 40.0f }, textures.bg.popup.size.to<float>() * 0.58f);
  }

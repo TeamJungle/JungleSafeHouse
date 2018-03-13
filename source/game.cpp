@@ -8,6 +8,7 @@
 
 void game_save_data::write(ne::memory_buffer* buffer) {
 	buffer->write_int32(coins);
+	buffer->write_uint8(item_machete ? 1 : 0);
 	buffer->write_uint32(levels_completed.size());
 	for (auto& i : levels_completed) {
 		buffer->write_int32(i.second.num);
@@ -16,6 +17,7 @@ void game_save_data::write(ne::memory_buffer* buffer) {
 
 void game_save_data::read(ne::memory_buffer* buffer) {
 	coins = buffer->read_int32();
+	item_machete = (buffer->read_uint8() != 0);
 	uint32 levels_done = buffer->read_uint32();
 	levels_completed.clear();
 	for (uint32 i = 0; i < levels_done; i++) {
@@ -66,6 +68,16 @@ int game_save_data::get_coins() const {
 	return coins;
 }
 
+void game_save_data::give_machete() {
+	item_machete = true;
+	saved = false;
+	must_save = true;
+}
+
+bool game_save_data::has_machete() const {
+	return item_machete;
+}
+
 game_state::game_state() {
 	camera.target_chase_aspect.y = 1.75f;
 	camera.target_chase_speed = { 0.15f, 0.025f };
@@ -84,6 +96,10 @@ game_state::game_state() {
 	//music.jungle.play();
 
 	listener.pause = input().pause.listen([this] {
+		if (world.shop.is_open) {
+			world.shop.owner->close_shop(&world.shop);
+			return;
+		}
 		if (pause.is_open()) {
 			pause.close();
 		} else {
@@ -95,7 +111,7 @@ game_state::game_state() {
 }
 
 game_state::~game_state() {
-	ne::erase(&listener.pause);
+	input().pause.erase(&listener.pause);
 }
 
 void game_state::update() {
@@ -132,7 +148,6 @@ void game_state::update() {
 }
 
 void game_state::draw() {
-	shaders.basic.bind();
 	ne::transform3f view;
 	
 	// World
@@ -143,6 +158,7 @@ void game_state::draw() {
 	world.draw(view);
 
 	// UI
+	shaders.basic.bind();
 	ui_camera.bind();
 	view.position.xy = ui_camera.xy();
 	view.scale.xy = ui_camera.size();
@@ -162,6 +178,10 @@ void game_state::draw() {
 	ne::shader::set_color(1.0f);
 	still_quad().bind();
 	debug.draw(view);
+
+	// TODO: NPCs need this to be bound in update. 
+	// This should be fixed by having a reference in world or something.
+	camera.bind();
 }
 
 void game_state::save() {

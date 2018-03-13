@@ -31,37 +31,62 @@ ne::transform3f player_object::collision_transform() {
 
 void player_object::update(ne::game_world* world, ne::game_world_chunk* chunk) {
 	ne::game_object::update(world, chunk);
+	game_world* w = (game_world*)world;
+	save_data = w->save_data;
+	auto move = component<game_object_move_component>();
 	if (up_hit == -1) {
-		up_hit = input().up_hit.listen([this] {
-			component<game_object_move_component>()->jump();
+		up_hit = input().up_hit.listen([this, w] {
+			if (!w->shop.is_open) {
+				component<game_object_move_component>()->jump();
+			}
 		});
 	}
 	if (down_hit == -1) {
-		down_hit = input().down_hit.listen([this] {
-			component<game_object_move_component>()->slide(direction);
+		down_hit = input().down_hit.listen([this, w] {
+			if (!w->shop.is_open) {
+				component<game_object_move_component>()->slide(direction);
+			}
 		});
 	}
 	if (interact_hit == -1) {
-		interact_hit = input().interact.listen([this, world] {
-			world->each<door_object>([&](auto door) {
-				if (!collision_transform().collides_with(door->transform)) {
-					return;
+		interact_hit = input().interact.listen([this, w, move] {
+			if (w->shop.is_open) {
+				return;
+			}
+			bool no_action = w->each_if<npc_object>([&](auto npc) {
+				if (!collision_transform().collides_with(npc->transform)) {
+					return true;
 				}
-				auto w = (game_world*)world;
+				if (!w->shop.is_open) {
+					npc->open_shop(&w->shop);
+					move->stop();
+				}
+				return false;
+			});
+			if (no_action || w->shop.is_open) {
+				return;
+			}
+			no_action = w->each_if<door_object>([&](auto door) {
+				if (!collision_transform().collides_with(door->transform)) {
+					return true;
+				}
 				if (door->is_open) {
 					w->save_data->complete_level(w->level_num);
 					w->change(door->leads_to_level_num);
-					return;
+					return false;
 				}
 				if (door->opening_cost > w->save_data->get_coins()) {
-					return;
+					return false;
 				}
 				door->is_open = true;
 				w->save_data->add_coins(-door->opening_cost);
+				return false;
 			});
 		});
 	}
-	auto move = component<game_object_move_component>();
+	if (w->shop.is_open) {
+		return;
+	}
 	bool up = input().up.is_active();
 	bool left = input().left.is_active();
 	bool down = input().down.is_active();
@@ -74,21 +99,25 @@ void player_object::update(ne::game_world* world, ne::game_world_chunk* chunk) {
 void player_object::draw() {
 	auto move = component<game_object_move_component>();
 	ne::texture* sprite = &textures.objects.player.idle[direction];
+	ne::texture* machete = &textures.objects.machete.idle[direction];
 	int old_state = state;
 	state = 0;
 	if (move->is_running) {
 		sprite = &textures.objects.player.run[direction];
+		machete = &textures.objects.machete.run[direction];
 		animation.fps = 30.0f;
 		state = 1;
 	}
 	if (move->is_sliding) {
 		// TODO: Animation should play once (leaving it on the last frame)
 		sprite = &textures.objects.player.slide[direction];
+		machete = &textures.objects.machete.slide[direction];
 		animation.fps = 14.0f;
 		state = 2;
 	}
 	if (move->is_jumping()) {
 		sprite = &textures.objects.player.jump[direction];
+		machete = &textures.objects.machete.jump[direction];
 		animation.fps = 18.0f;
 		state = 3;
 	}
@@ -100,6 +129,13 @@ void player_object::draw() {
 	ne::shader::set_transform(&transform);
 	sprite->bind();
 	animation.draw(true);
+	if (!save_data) {
+		return;
+	}
+	if (save_data->has_machete()) {
+		machete->bind();
+		animation.draw(false);
+	}
 }
 
 void player_object::write(ne::memory_buffer* buffer) {

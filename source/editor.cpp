@@ -5,6 +5,21 @@
 
 #include <platform.hpp>
 
+void editor_state::start_drag() {
+	if (selected && !select_object_popup.is_open) {
+		ne::vector2f camera_mouse = camera.mouse();
+		if (!drag.is_dragging) {
+			drag.is_dragging = true;
+			drag.old_position = selected->transform.position.xy;
+			drag.new_position = drag.old_position;
+			drag.offset = {
+				camera_mouse.x - drag.old_position.x,
+				camera_mouse.y - drag.old_position.y
+			};
+		}
+	}
+}
+
 editor_state::editor_state() {
 	ne::initialize_imgui();
 	camera.zoom = 2.0f;
@@ -39,13 +54,20 @@ editor_state::editor_state() {
 	});
 
 	click_listener = ne::listen([this](ne::mouse_button_message click) {
-		if (!click.is_pressed) {
+		if (ne::mouse_position().x < 256 || any_context_open) {
 			return;
 		}
 		if (click.button != MOUSE_BUTTON_LEFT) {
 			return;
 		}
-		if (ne::mouse_position().x < 256 || any_context_open) {
+		if (!click.is_pressed) {
+			if (select_object_popup.is_open || tool != EDITOR_TOOL_SELECT) {
+				return;
+			}
+			if (drag.is_dragging) {
+				saved = false;
+			}
+			drag = {};
 			return;
 		}
 		std::vector<ne::game_object*> objects = world.find_objects_at_position(camera.mouse());
@@ -54,6 +76,7 @@ editor_state::editor_state() {
 		switch (tool) {
 		case EDITOR_TOOL_SELECT:
 			selected = last;
+			start_drag();
 			break;
 		case EDITOR_TOOL_PLACE: {
 			ne::texture* texture = ne::game_object_factory::default_texture(place_meta);
@@ -61,8 +84,9 @@ editor_state::editor_state() {
 			ne::vector2i texture_size = texture->frame_size() / 2;
 			place_position.x -= (float)texture_size.x * object_scale;
 			place_position.y -= (float)texture_size.y * object_scale;
-			place_position.x = std::round(place_position.x);
-			place_position.y = std::round(place_position.y);
+			place_position.x -= (float)((int)place_position.x % grid.x);
+			place_position.y -= (float)((int)place_position.y % grid.y);
+			place_position.floor();
 			auto object = world.spawn(world.definitions.objects.meta->get_meta(place_meta.type, place_meta.subtype), place_position);
 			if (object) {
 				object->transform.rotation.z = object_rotation;
@@ -207,8 +231,45 @@ void editor_state::update() {
 	world.ground_y = (float)ground_y_int;
 	ImGui::Checkbox("Draw collisions", &world.draw_collisions);
 	ImGui::Text(CSTRING("Objects: " << world.object_count()));
+	ImGui::SameLine();
 	ImGui::Text(CSTRING("Chunks: " << world.chunks.size()));
+	ImGui::Text("Grid:");
+	ImGui::SameLine();
+	ImGui::InputInt2("Grid", &grid.x);
+	if (grid.x < 1) {
+		grid.x = 1;
+	} else if (grid.x > 1000) {
+		grid.x = 1000;
+	}
+	if (grid.y < 1) {
+		grid.y = 1;
+	} else if (grid.y > 1000) {
+		grid.y = 1000;
+	}
 	ImGui::Separator();
+
+	ImGui::Text("Backgrounds");
+	ImGui::Checkbox("Back", &world.backgrounds.background.is_visible);
+	ImGui::SameLine();
+	ImGui::Checkbox("Distant trees", &world.backgrounds.trees.is_visible);
+	ImGui::Checkbox("Back fog", &world.backgrounds.fog_back.is_visible);
+	ImGui::SameLine();
+	ImGui::Checkbox("Trees", &world.backgrounds.mid.is_visible);
+	ImGui::Checkbox("Leaves", &world.backgrounds.top.is_visible);
+	ImGui::SameLine();
+	ImGui::Checkbox("Vines", &world.backgrounds.top_lines.is_visible);
+	ImGui::Checkbox("Grass", &world.backgrounds.bottom.is_visible);
+	ImGui::SameLine();
+	ImGui::Checkbox("Front fog", &world.backgrounds.fog_front.is_visible);
+	ImGui::Separator();
+
+	ImGui::Text("Light");
+	ImGui::InputFloat("Base", &world.base_light);
+	if (world.base_light < 0.0f) {
+		world.base_light = 0.0f;
+	} else if (world.base_light > 1.0f) {
+		world.base_light = 1.0f;
+	}
 
 	// Tools
 	ImGui::Text("Tool");
@@ -226,6 +287,27 @@ void editor_state::update() {
 	// Active tool
 	switch (tool) {
 	case EDITOR_TOOL_SELECT: {
+		if (ImGui::IsMouseClicked(1) && ne::mouse_position().x > 256 && !drag.is_dragging) {
+			select_object_popup.objects = world.find_objects_at_position(camera.mouse());
+			if (select_object_popup.objects.size() > 0) {
+				ImGui::OpenPopup("SelectObjectPopupMenu");
+			}
+		}
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8, 8));
+		select_object_popup.is_open = false;
+		if (ImGui::BeginPopup("SelectObjectPopupMenu")) {
+			select_object_popup.is_open = true;
+			for (auto& i : select_object_popup.objects) {
+				auto i_meta = world.definitions.objects.meta->get_meta(i->type(), i->subtype);
+				if (ImGui::MenuItem(STRING(i_meta.name << " (" << i->type_name() << ")" << " #" << i->id).c_str())) {
+					selected = i;
+					start_drag();
+				}
+			}
+			ImGui::EndPopup();
+		}
+		ImGui::PopStyleVar();
+
 		ImGui::Text("Selected object: ");
 		ImGui::SameLine();
 		if (!selected) {
@@ -267,6 +349,11 @@ void editor_state::update() {
 			selected->collision.offset = 0.0f;
 			selected->collision.size = selected->transform.scale.xy;
 		}
+		ImGui::SameLine();
+		if (ImGui::Button("None##NoCollision")) {
+			selected->collision.offset = 0.0f;
+			selected->collision.size = 0.0f;
+		}
 		int collision[4];
 		collision[0] = (int)selected->collision.offset.x;
 		collision[1] = (int)selected->collision.offset.y;
@@ -275,6 +362,29 @@ void editor_state::update() {
 		ImGui::InputInt4("Collision", &collision[0]);
 		selected->collision.offset = { (float)collision[0], (float)collision[1] };
 		selected->collision.size = { (float)collision[2], (float)collision[3] };
+		ImGui::Separator();
+		ImGui::Text("Light: ");
+		ImGui::SameLine();
+		if (world.lights.size() >= 20) {
+			ImGui::Text("Cannot add light to this object. Limit reached.");
+		} else {
+			// TODO: Maybe not use for loop here, but doesn't really hurt.
+			bool has_light = false;
+			for (auto& i : world.lights) {
+				if (i.object_id == selected->id) {
+					ImGui::InputFloat3("Color", &i.color.x);
+					ImGui::InputFloat("Intensity", &i.intensity);
+					has_light = true;
+					break;
+				}
+			}
+			if (!has_light) {
+				if (ImGui::Button("Add##AddLight")) {
+					world.lights.push_back({});
+					world.lights.back().object_id = selected->id;
+				}
+			}
+		}
 		ImGui::Separator();
 		if (selected->type() == OBJECT_TYPE_DOOR) {
 			auto door = (door_object*)selected;
@@ -338,6 +448,20 @@ void editor_state::update() {
 	ImGui::End();
 	ImGui::PopStyleColor();
 
+	if (drag.is_dragging && ne::is_mouse_button_down(MOUSE_BUTTON_LEFT)) {
+		ne::vector2f mouse = camera.mouse();
+		mouse.floor();
+		drag.new_position = {
+			mouse.x - drag.offset.x,
+			mouse.y - drag.offset.y
+		};
+		selected->transform.position.xy = {
+			drag.new_position.x - (float)((int)drag.new_position.x % grid.x),
+			drag.new_position.y - (float)((int)drag.new_position.y % grid.y)
+		};
+		selected->transform.position.floor();
+	}
+
 	// Update debug info
 	debug.set(&fonts.debug, STRING(
 		"Delta " << ne::delta() << 
@@ -365,6 +489,9 @@ void editor_state::draw() {
 		ne::vector2i texture_size = texture->frame_size() / 2;
 		meta_transform.position.x -= (float)texture_size.x * object_scale;
 		meta_transform.position.y -= (float)texture_size.y * object_scale;
+		meta_transform.position.x -= (float)((int)meta_transform.position.x % grid.x);
+		meta_transform.position.y -= (float)((int)meta_transform.position.y % grid.y);
+		meta_transform.position.floor();
 		meta_transform.scale.xy = object_scale;
 		meta_transform.rotation.z = object_rotation;
 		animated_quad().bind();

@@ -10,6 +10,7 @@
 #include "item_object.hpp"
 #include "platform_object.hpp"
 #include "door_object.hpp"
+#include "npc_object.hpp"
 #include "menu.hpp"
 
 #include <engine.hpp>
@@ -88,6 +89,22 @@ void start() {
 		return new door_object();
 	}, [](int subtype) {
 		return &textures.objects.door.door[subtype];
+	}, [](int subtype) -> std::vector<ne::texture*> {
+		return { nullptr };
+	});
+
+	ne::game_object_factory::define(OBJECT_TYPE_SPIKES, [] {
+		return new spikes_object();
+	}, [](int subtype) {
+		return &textures.objects.spikes[subtype];
+	}, [](int subtype) -> std::vector<ne::texture*> {
+		return { nullptr };
+	});
+
+	ne::game_object_factory::define(OBJECT_TYPE_NPC, [] {
+		return new npc_object();
+	}, [](int subtype) {
+		return &textures.objects.npc[subtype];
 	}, [](int subtype) -> std::vector<ne::texture*> {
 		return { nullptr };
 	});

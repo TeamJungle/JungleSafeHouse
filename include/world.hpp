@@ -2,6 +2,7 @@
 
 #include "game_world_background.hpp"
 #include "game_object_types.hpp"
+#include "npc_object.hpp"
 
 #include <game_world.hpp>
 #include <game_object.hpp>
@@ -11,6 +12,19 @@ class player_object;
 class game_state;
 class game_save_data;
 
+class game_world;
+
+class point_light {
+public:
+
+	float intensity = 0.998f;
+	ne::vector3f color = { 1.0f, 0.9f, 0.8f };
+	int object_id = -1;
+
+	void bind(int index, game_world* world);
+
+};
+
 class game_world : public ne::game_world {
 public:
 
@@ -18,6 +32,8 @@ public:
 	bool draw_collisions = false;
 	game_save_data* save_data = nullptr;
 	int level_num = -1;
+	std::vector<point_light> lights;
+	float base_light = 1.0f;
 
 	struct {
 		// Background:
@@ -42,6 +58,8 @@ public:
 
 	void change(int level_num);
 	void after_load() override;
+
+	shop_ui shop;
 
 private:
 

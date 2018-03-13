@@ -30,12 +30,16 @@ public:
 	void add_coins(int amount);
 	int get_coins() const;
 
+	void give_machete();
+	bool has_machete() const;
+
 private:
 
 	bool saved = true;
 	bool must_save = false;
 	int32 coins = 0;
 	std::unordered_map<int, level_complete_data> levels_completed;
+	bool item_machete = false;
 
 };
 

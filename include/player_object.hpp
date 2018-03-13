@@ -4,6 +4,8 @@
 
 #include <game_object.hpp>
 
+class game_save_data;
+
 class player_object : public ne::game_object {
 public:
 
@@ -20,5 +22,7 @@ private:
 	int down_hit = -1;
 	int interact_hit = -1;
 	int state = 0;
+
+	game_save_data* save_data = nullptr;
 
 };
