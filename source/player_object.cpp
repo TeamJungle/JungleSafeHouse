@@ -63,7 +63,7 @@ void player_object::update(ne::game_world* world, ne::game_world_chunk* chunk) {
 				}
 				return false;
 			});
-			if (no_action || w->shop.is_open) {
+			if (!no_action || w->shop.is_open) {
 				return;
 			}
 			no_action = w->each_if<door_object>([&](auto door) {
