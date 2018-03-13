@@ -18,7 +18,7 @@
 		std::exit(ne::stop_engine(0));
 	});
 	ne::set_music_volume(15);
-	//music.safehouse.play();
+	music.safehouse.play();
 }
 
  menu_state::~menu_state() {

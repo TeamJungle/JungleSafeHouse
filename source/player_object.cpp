@@ -59,6 +59,8 @@ void player_object::update(ne::game_world* world, ne::game_world_chunk* chunk) {
 				}
 				if (!w->shop.is_open) {
 					npc->open_shop(&w->shop);
+					sounds.monkey.set_volume(10);
+					sounds.monkey.play();
 					move->stop();
 				}
 				return false;
@@ -80,6 +82,8 @@ void player_object::update(ne::game_world* world, ne::game_world_chunk* chunk) {
 				}
 				door->is_open = true;
 				w->save_data->add_coins(-door->opening_cost);
+				sounds.door.set_volume(15);
+				sounds.door.play();
 				return false;
 			});
 		});

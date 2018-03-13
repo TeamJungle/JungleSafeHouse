@@ -180,4 +180,7 @@ void sound_assets::initialize() {
 	for (int i = 0; i < 5; i++) {
 		load({ &pickup[i], STRING("pickup" << i << ".ogg") });
 	}
+	load({ &monkey, "monkey.wav" });
+	load({ &tiger, "tiger.ogg" });
+	load({ &door, "door.ogg" });
 }

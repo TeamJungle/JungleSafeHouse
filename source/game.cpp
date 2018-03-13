@@ -93,7 +93,7 @@ game_state::game_state() {
 #endif
 
 	ne::set_music_volume(10);
-	//music.jungle.play();
+	music.jungle.play();
 
 	listener.pause = input().pause.listen([this] {
 		if (world.shop.is_open) {

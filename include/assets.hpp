@@ -99,7 +99,10 @@ class sound_assets : public ne::music_group {
 public:
 
 	ne::sound pickup[5];
-
+	ne::sound monkey;
+	ne::sound tiger;
+	ne::sound door;
+	
 	void initialize();
 
 };

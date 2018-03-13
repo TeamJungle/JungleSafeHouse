@@ -98,6 +98,8 @@ void game_world::update() {
 		bool alive = each_if<chaser_object>([&](auto chaser) {
 			if (player->collision_transform().collides_with(chaser->collision_transform())) {
 				destroy_object(player->id, nullptr);
+				sounds.tiger.set_volume(15);
+				sounds.tiger.play();
 				return false;
 			}
 			return true;
@@ -139,6 +141,11 @@ void game_world::draw(const ne::transform3f& view) {
 		ne::shader::set_color(1.0f);
 		ne::ortho_camera::bound()->bind();
 		for (size_t i = 0; i < lights.size(); i++) {
+			if (!find_object<ne::game_object>(lights[i].object_id)) {
+				lights.erase(lights.begin() + i);
+				i--;
+				continue;
+			}
 			lights[i].bind(i, this);
 		}
 		ne::shader::set_variable(ne::shader::get_variable_handle("uni_LightCount"), (int)lights.size());

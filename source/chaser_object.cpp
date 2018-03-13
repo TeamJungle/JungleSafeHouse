@@ -28,6 +28,8 @@ void chaser_object::update(ne::game_world* world, ne::game_world_chunk* chunk) {
 		auto player_collision = player->collision_transform();
 		if (player->side_direction == ne::direction_side::left && player_move->is_jumping()) {
 			move->jump();
+			sounds.tiger.set_volume(15);
+			sounds.tiger.play();
 		}
 		if (player_collision.position.x + player_collision.scale.width > this_collision.position.x) {
 			side_direction = ne::direction_side::right;
