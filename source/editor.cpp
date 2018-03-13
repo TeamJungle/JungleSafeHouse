@@ -24,10 +24,21 @@ editor_state::editor_state() {
 	ne::initialize_imgui();
 	camera.zoom = 2.0f;
 
-	if (ne::file_exists(EDITOR_CURRENT_WORLD)) {
-		world.load(EDITOR_CURRENT_WORLD);
+	int level_num = 0;
+	if (ne::file_exists("worlds/local/editor.txt")) {
+		std::string config = ne::read_file("worlds/local/editor.txt");
+		level_num = std::stoi(config);
+	}
+#if _DEBUG
+	std::string world_path = STRING("worlds/local/" << level_num << ".world");
+#else
+	std::string world_path = STRING("worlds/" << level_num << ".world");
+#endif
+
+	if (ne::file_exists(world_path)) {
+		world.load(world_path);
 	} else {
-		world.level_num = EDITOR_CURRENT_WORLD_NUM;
+		world.level_num = level_num;
 	}
 
 	place_meta = world.definitions.objects.meta->get_meta(0, 0);
@@ -512,6 +523,11 @@ void editor_state::draw() {
 }
 
 void editor_state::save() {
-	world.save(EDITOR_CURRENT_WORLD);
+#if _DEBUG
+	std::string path = STRING("worlds/local/" << world.level_num << ".world");
+#else
+	std::string path = STRING("worlds/" << world.level_num << ".world");
+#endif
+	world.save(path);
 	saved = true;
 }

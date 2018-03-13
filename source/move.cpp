@@ -8,14 +8,14 @@ void game_object_move_component::update(ne::game_world* world, ne::game_world_ch
 	if (is_sliding) {
 		if (slide_left > 0.0f) {
 			move(world, false, true);
-			slide_left -= 6.0f;
+			slide_left -= 5.0f;
 			if (slide_left < 1.0f) {
 				slide_left = 0.0f;
 				is_sliding = false;
 			}
 		} else {
 			move(world, true, false);
-			slide_left += 6.0f;
+			slide_left += 5.0f;
 			if (slide_left > -1.0f) {
 				slide_left = 0.0f;
 				is_sliding = false;
