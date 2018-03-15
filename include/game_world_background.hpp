@@ -9,6 +9,8 @@ public:
 
 	bool is_visible = true;
 
+	bool upwards = false;
+
 	// Used with sin() to make some slight varying movement.
 	ne::timer timer;
 	float speed = 1000.0f;
@@ -17,7 +19,7 @@ public:
 	// The offset from the top of the view.
 	ne::vector2f top_offset;
 
-	// The offest from the bottom of the view.
+	// The offset from the bottom of the view.
 	ne::vector2f bottom_offset;
 
 	// The scale of the texture.

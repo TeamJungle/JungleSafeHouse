@@ -18,6 +18,9 @@ void game_world_background::draw(const ne::transform3f& view, ne::texture* textu
 	for (float x = x_start; x < x_end; x += transform.scale.width) {
 		transform.position.x = x + top_offset.x;
 		transform.position.y = top_offset.y;
+		if (upwards && view.position.y < top_offset.y + transform.scale.height) {
+			transform.position.y += view.position.y * (view.position.y > 0.0f ? -1.0f : 1.0f);
+		}
 		if (bottom_offset.y > 1.0f) {
 			transform.position.y += view.scale.height - bottom_offset.y;
 		}

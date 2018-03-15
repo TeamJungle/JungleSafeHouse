@@ -25,6 +25,7 @@ void door_object::draw() {
 	label.transform.position.x = transform.position.x + transform.scale.width / 2.0f - label.transform.scale.width / 2.0f;
 	label.transform.position.y = transform.position.y + transform.scale.height / 2.0f - label.transform.scale.height / 6.0f;
 	ne::shader::set_color(1.0f, 0.4f, 0.1f, 0.7f);
+	label.transform.rotation.z = transform.rotation.z;
 	label.draw();
 	ne::shader::set_color(1.0f);
 }

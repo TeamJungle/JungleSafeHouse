@@ -65,6 +65,9 @@ game_world::game_world() {
 
 	backgrounds.top_lines.zoom = 0.75f;
 	backgrounds.top_lines.top_offset.y = 200.0f;
+
+	backgrounds.top.upwards = true;
+	backgrounds.top_lines.upwards = true;
 }
 
 void game_world::update() {

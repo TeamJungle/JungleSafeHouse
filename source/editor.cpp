@@ -191,8 +191,8 @@ void editor_state::update() {
 		if (camera.transform.position.x < -left_panel.scale.width) {
 			camera.transform.position.x = -left_panel.scale.width;
 		}
-		if (camera.transform.position.y < 0.0f) {
-			camera.transform.position.y = 0.0f;
+		if (camera.transform.position.y < -300.0f) {
+			camera.transform.position.y = -300.0f;
 		}
 	}
 
