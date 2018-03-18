@@ -9,7 +9,7 @@
 		ne::swap_state<game_state>();
 	});
 	menu.add_button("Settings", [] {
-
+		ne::swap_state<settings_state>();
 	});
 	menu.add_button("Editor", [] {
 		ne::swap_state<editor_state>();
@@ -17,8 +17,7 @@
 	menu.add_button("Quit", [] {
 		std::exit(ne::stop_engine(0));
 	});
-	ne::set_music_volume(15);
-	music.safehouse.play();
+	settings::play(&audio.safehouse, 0.15f);
 }
 
  menu_state::~menu_state() {
@@ -41,5 +40,5 @@
 	ne::shader::set_transform(&bg);
 	ne::shader::set_color(1.0f);
 	still_quad().draw();
-	menu.draw(camera.size(), { 0.0f, 40.0f }, textures.bg.popup.size.to<float>() * 0.58f);
+	menu.draw(camera.size(), { 0.0f, 40.0f }, textures.ui.popup.size.to<float>() * 0.58f);
  }

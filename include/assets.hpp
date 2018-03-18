@@ -17,9 +17,6 @@ public:
 
 	ne::texture blank;
 	ne::texture nothing;
-	ne::texture button;
-	ne::texture coin;
-	ne::texture machete;
 
 	struct {
 		struct {
@@ -46,10 +43,12 @@ public:
 
 	struct {
 		ne::texture menu;
-		ne::texture popup;
-		ne::texture shop;
 
-		ne::texture bg;
+		ne::texture high_dark;
+		ne::texture normal_dark;
+		ne::texture high_bright;
+		ne::texture normal_bright;
+
 		ne::texture bg_back;
 		ne::texture bg_bott;
 		ne::texture bg_far1;
@@ -58,6 +57,14 @@ public:
 		ne::texture bg_top;
 		ne::texture bg_top_lines;
 	} bg;
+
+	struct {
+		ne::texture popup;
+		ne::texture shop;
+		ne::texture button;
+		ne::texture coin;
+		ne::texture machete;
+	} ui;
 
 	void initialize();
 
@@ -85,24 +92,17 @@ public:
 
 };
 
-class music_assets : public ne::music_group {
+class audio_assets : public ne::music_group {
 public:
 
 	ne::music safehouse;
 	ne::music jungle;
 
-	void initialize();
-
-};
-
-class sound_assets : public ne::music_group {
-public:
-
 	ne::sound pickup[5];
 	ne::sound monkey;
 	ne::sound tiger;
 	ne::sound door;
-	
+
 	void initialize();
 
 };
@@ -116,8 +116,5 @@ font_assets& _fonts();
 shader_assets& _shaders();
 #define shaders _shaders()
 
-music_assets& _music();
-#define music _music()
-
-sound_assets& _sounds();
-#define sounds _sounds()
+audio_assets& _audio();
+#define audio _audio()

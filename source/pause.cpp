@@ -28,7 +28,7 @@ void pause_menu::draw(const ne::vector2f& camera_size) {
 	if (!active) {
 		return;
 	}
-	menu.draw(camera_size, 0.0f, textures.bg.popup.size.to<float>() / 2.0f);
+	menu.draw(camera_size, 0.0f, textures.ui.popup.size.to<float>() / 2.0f);
 }
 
 bool pause_menu::is_open() const {

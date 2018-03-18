@@ -92,8 +92,7 @@ game_state::game_state() {
 	world.load("worlds/0.world");
 #endif
 
-	ne::set_music_volume(10);
-	music.jungle.play();
+	settings::play(&audio.jungle, 0.1f);
 
 	listener.pause = input().pause.listen([this] {
 		if (world.shop.is_open) {
@@ -133,7 +132,7 @@ void game_state::update() {
 
 	coins_label.font = &fonts.hud;
 	coins_label.render(STRING(save_data.get_coins()));
-	coins_label.transform.position.x = ui_camera.width() / 2.0f - coins_label.transform.scale.width / 2.0f - textures.coin.size.to<float>().x / 2.0f;
+	coins_label.transform.position.x = ui_camera.width() / 2.0f - coins_label.transform.scale.width / 2.0f - textures.ui.coin.size.to<float>().x / 2.0f;
 	coins_label.transform.position.y = 32.0f;
 
 	debug.set(&fonts.debug, STRING(
@@ -165,10 +164,10 @@ void game_state::draw() {
 	coins_label.draw();
 	// TODO: Clean
 	{
-		textures.coin.bind();
+		textures.ui.coin.bind();
 		ne::transform3f t;
 		t.position = coins_label.transform.position;
-		t.scale.xy = textures.coin.size.to<float>();
+		t.scale.xy = textures.ui.coin.size.to<float>();
 		t.position.x -= t.scale.width;
 		ne::shader::set_transform(&t);
 		still_quad().bind();

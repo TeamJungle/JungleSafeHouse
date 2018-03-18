@@ -6,8 +6,7 @@ struct asset_container {
 	texture_assets _textures;
 	font_assets _fonts;
 	shader_assets _shaders;
-	music_assets _music;
-	sound_assets _sounds;
+	audio_assets _audio;
 };
 
 static asset_container* _assets = nullptr;
@@ -22,20 +21,17 @@ void load_assets() {
 	_assets->_textures.initialize();
 	_assets->_fonts.initialize();
 	_assets->_shaders.initialize();
-	_assets->_music.initialize();
-	_assets->_sounds.initialize();
+	_assets->_audio.initialize();
 	// Load all the assets in one go.
 	_assets->_textures.load_all();
 	_assets->_fonts.load_all();
 	_assets->_shaders.load_all();
-	_assets->_music.load_all();
-	_assets->_sounds.load_all();
+	_assets->_audio.load_all();
 	// Process the loaded assets. Textures must be rendered, etc...
 	_assets->_textures.process_some(1000);
 	_assets->_fonts.process_some(1000);
 	_assets->_shaders.process_some(1000);
-	_assets->_music.process_some(1000);
-	_assets->_sounds.process_some(1000);
+	_assets->_audio.process_some(1000);
 }
 
 void destroy_assets() {
@@ -58,12 +54,8 @@ shader_assets& _shaders() {
 	return _assets->_shaders;
 }
 
-music_assets& _music() {
-	return _assets->_music;
-}
-
-sound_assets& _sounds() {
-	return _assets->_sounds;
+audio_assets& _audio() {
+	return _assets->_audio;
 }
 
 void texture_assets::initialize() {
@@ -75,9 +67,6 @@ void texture_assets::initialize() {
 
 	load({ &blank, "blank.png" }, false);
 	load({ &nothing, "nothing.png" }, false);
-	load({ &button, "button.png", 3 });
-	load({ &coin, "coin.png" });
-	load({ &machete, "machete.png" });
 
 	group("objects/player");
 	load({ &objects.player.idle[left], "idle.png", 1, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
@@ -139,7 +128,11 @@ void texture_assets::initialize() {
 	load({ &objects.npc[NPC_MONKEY], "monkey.png", 3 });
 
 	group("bg");
-	load({ &bg.bg, "bg.png" });
+	load({ &bg.menu, "menu.png" });
+	load({ &bg.high_dark, "high_dark.png" });
+	load({ &bg.normal_dark, "normal_dark.png" });
+	load({ &bg.high_bright, "high_bright2.png" });
+	load({ &bg.normal_bright, "normal_bright.png" });
 	load({ &bg.bg_back, "bg_back.png" });
 	load({ &bg.bg_bott, "bg_bott.png" });
 	load({ &bg.bg_far1, "bg_far1.png" });
@@ -147,9 +140,13 @@ void texture_assets::initialize() {
 	load({ &bg.bg_mid, "bg_mid.png" });
 	load({ &bg.bg_top, "bg_top.png" });
 	load({ &bg.bg_top_lines, "bg_top_lines.png" });
-	load({ &bg.menu, "menu.png" });
-	load({ &bg.popup, "popup.png" });
-	load({ &bg.shop, "shop.png" });
+
+	group("ui");
+	load({ &ui.popup, "popup.png" });
+	load({ &ui.shop, "shop.png" });
+	load({ &ui.button, "button.png", 3 });
+	load({ &ui.coin, "coin.png" });
+	load({ &ui.machete, "machete.png" });
 
 	spawn_thread();
 	finish();
@@ -169,13 +166,11 @@ void shader_assets::initialize() {
 	load({ &light, "light" });
 }
 
-void music_assets::initialize() {
+void audio_assets::initialize() {
 	root("assets/music");
 	load({ &safehouse, "safehouse.ogg", -1 });
 	load({ &jungle, "jungle.ogg", -1 });
-}
 
-void sound_assets::initialize() {
 	root("assets/sounds");
 	for (int i = 0; i < 5; i++) {
 		load({ &pickup[i], STRING("pickup" << i << ".ogg") });

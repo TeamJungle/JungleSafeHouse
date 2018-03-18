@@ -31,6 +31,40 @@ void point_light::bind(int index, game_world* world) {
 	ne::shader::set_variable(light_intensity_handle, intensity);
 }
 
+void game_world::world_backgrounds::set_default() {
+	// Configure backgrounds
+	background.top_offset.y = -300.0f;
+	background.zoom = 0.5f;
+	trees.top_offset.y = 250.0f;
+	trees.zoom = 0.5f;
+	mid.top_offset.y = 200.0f;
+	mid.zoom = 0.5f;
+
+	// Configure foregrounds
+	bottom.zoom = 1.0f;
+	bottom.zoom = 0.4f;
+	bottom.top_offset.y = 400.0f;
+	bottom.top_offset.y = 300.0f;
+	bottom.bottom_offset.y = 322.0f * 0.75f;
+	bottom.bottom_offset.y = 192.0f * 0.75f;
+
+	fog_back.top_offset.y = 250.0f;
+	fog_back.speed = 500.0f;
+	fog_back.timer.start();
+
+	fog_front.zoom = 0.5f;
+	fog_front.top_offset.x = 100.0f;
+	fog_front.top_offset.y = 400.0f;
+	fog_front.speed = 1500.0f;
+	fog_front.timer.start();
+
+	top.zoom = 0.75f;
+	top.top_offset.y = 150.0f;
+
+	top_lines.zoom = 0.5f;
+	top_lines.top_offset.y = 150.0f;
+}
+
 game_world::game_world() {
 	definitions.objects.meta = new game_object_definitions();
 	definitions.objects.meta->initialize();
@@ -40,32 +74,7 @@ game_world::game_world() {
 	// Place the only chunk we use.
 	place_chunk(0, 0);
 
-	// Configure backgrounds
-	backgrounds.background.top_offset.y = 200.0f;
-	backgrounds.trees.top_offset.y = 250.0f;
-	backgrounds.mid.top_offset.y = 200.0f;
-
-	// Configure foregrounds
-	backgrounds.bottom.zoom = 1.0f;
-	backgrounds.bottom.top_offset.y = 400.0f;
-	backgrounds.bottom.bottom_offset.y = 192.0f * 0.75f;
-
-	backgrounds.fog_back.top_offset.y = 250.0f;
-	backgrounds.fog_back.speed = 500.0f;
-	backgrounds.fog_back.timer.start();
-
-	backgrounds.fog_front.zoom = 0.5f;
-	backgrounds.fog_front.top_offset.x = 100.0f;
-	backgrounds.fog_front.top_offset.y = 400.0f;
-	backgrounds.fog_front.speed = 1500.0f;
-	backgrounds.fog_front.timer.start();
-
-	backgrounds.top.zoom = 0.75f;
-	backgrounds.top.top_offset.y = 200.0f;
-
-	backgrounds.top_lines.zoom = 0.75f;
-	backgrounds.top_lines.top_offset.y = 200.0f;
-
+	backgrounds.set_default();
 	backgrounds.top.upwards = true;
 	backgrounds.top_lines.upwards = true;
 }
@@ -86,8 +95,7 @@ void game_world::update() {
 				// TODO: Clean.
 				{
 					static int last_pickup_sound = 0;
-					sounds.pickup[last_pickup_sound].set_volume(1);
-					sounds.pickup[last_pickup_sound].play();
+					settings::play(&audio.pickup[last_pickup_sound], 0.01f);
 					last_pickup_sound++;
 					if (last_pickup_sound > 4) {
 						last_pickup_sound = 0;
@@ -101,8 +109,7 @@ void game_world::update() {
 		bool alive = each_if<chaser_object>([&](auto chaser) {
 			if (player->collision_transform().collides_with(chaser->collision_transform())) {
 				destroy_object(player->id, nullptr);
-				sounds.tiger.set_volume(15);
-				sounds.tiger.play();
+				settings::play(&audio.tiger, 0.15f);
 				return false;
 			}
 			return true;
@@ -158,7 +165,7 @@ void game_world::draw(const ne::transform3f& view) {
 	}
 
 	// Backgrounds.
-	backgrounds.background.draw(view, &textures.bg.bg);
+	backgrounds.background.draw(view, &textures.bg.high_bright);
 	backgrounds.trees.draw(view, &textures.bg.bg_back);
 	backgrounds.fog_back.draw(view, &textures.bg.bg_fog);
 	backgrounds.mid.draw(view, &textures.bg.bg_mid);

@@ -32,6 +32,7 @@ void npc_object::open_shop(shop_ui* shop) {
 	shop->is_open = true;
 	shop->owner = this;
 	ne::ortho_camera::bound()->target_chase_aspect.y = 1.2f;
+	settings::play(&audio.monkey, 0.1f);
 }
 
 void npc_object::close_shop(shop_ui* shop) {
@@ -70,13 +71,13 @@ shop_ui::shop_ui() {
 			return;
 		}
 		active_slot++;
-		if (active_slot >= items.size()) {
+		if (active_slot >= (int)items.size()) {
 			active_slot = 0;
 		}
 	});
-	add_item({ 54.0f, 100.0f }, &textures.machete, 100);
-	add_item({ 104.0f, 100.0f }, &textures.machete, 400);
-	add_item({ 156.0f, 100.0f }, &textures.machete, 1000);
+	add_item({ 54.0f, 100.0f }, &textures.ui.machete, 100);
+	add_item({ 104.0f, 100.0f }, &textures.ui.machete, 400);
+	add_item({ 156.0f, 100.0f }, &textures.ui.machete, 1000);
 }
 
 shop_ui::~shop_ui() {
@@ -97,9 +98,9 @@ void shop_ui::draw(const ne::transform3f& view) {
 	}
 	ne::ortho_camera* camera = ne::ortho_camera::bound();
 	still_quad().bind();
-	textures.bg.shop.bind();
+	textures.ui.shop.bind();
 	ne::transform3f transform;
-	transform.scale.xy = textures.bg.shop.size.to<float>() * 0.2f;
+	transform.scale.xy = textures.ui.shop.size.to<float>() * 0.2f;
 	transform.position.x = view.position.x + camera->width() / 2.0f - transform.scale.width / 2.0f;
 	transform.position.y = view.position.y + camera->height() / 2.0f - transform.scale.height / 2.0f;
 	ne::shader::set_transform(&transform);

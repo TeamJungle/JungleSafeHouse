@@ -114,6 +114,9 @@ void start() {
 	ne::set_swap_interval(ne::swap_interval::immediate);
 	//ne::set_swap_interval(ne::swap_interval::sync);
 
+	// Load settings before starting the first state.
+	settings::load();
+
 	// Start the game.
 	ne::swap_state<menu_state>();
 }

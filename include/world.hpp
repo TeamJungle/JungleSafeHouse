@@ -3,6 +3,7 @@
 #include "game_world_background.hpp"
 #include "game_object_types.hpp"
 #include "npc_object.hpp"
+#include "settings.hpp"
 
 #include <game_world.hpp>
 #include <game_object.hpp>
@@ -35,7 +36,7 @@ public:
 	std::vector<point_light> lights;
 	float base_light = 1.0f;
 
-	struct {
+	struct world_backgrounds {
 		// Background:
 		game_world_background background;
 		game_world_background trees;
@@ -46,6 +47,8 @@ public:
 		game_world_background top_lines;
 		game_world_background bottom;
 		game_world_background fog_front;
+
+		void set_default();
 	} backgrounds;
 
 	game_world();
