@@ -50,12 +50,14 @@ void game_world::world_backgrounds::set_default() {
 
 	fog_back.top_offset.y = 250.0f;
 	fog_back.speed = 500.0f;
+	fog_back.x_vary = 16.0f;
 	fog_back.timer.start();
 
 	fog_front.zoom = 0.5f;
 	fog_front.top_offset.x = 100.0f;
 	fog_front.top_offset.y = 400.0f;
 	fog_front.speed = 1500.0f;
+	fog_front.x_vary = 16.0f;
 	fog_front.timer.start();
 
 	top.zoom = 0.75f;
@@ -63,6 +65,30 @@ void game_world::world_backgrounds::set_default() {
 
 	top_lines.zoom = 0.5f;
 	top_lines.top_offset.y = 150.0f;
+}
+
+void game_world::world_backgrounds::write(ne::memory_buffer* buffer) {
+	buffer->write_uint32(8); // How many backgrounds - might be useful in future
+	background.write(buffer);
+	trees.write(buffer);
+	fog_back.write(buffer);
+	mid.write(buffer);
+	top.write(buffer);
+	top_lines.write(buffer);
+	bottom.write(buffer);
+	fog_front.write(buffer);
+}
+
+void game_world::world_backgrounds::read(ne::memory_buffer* buffer) {
+	uint32 count = buffer->read_uint32();
+	background.read(buffer);
+	trees.read(buffer);
+	fog_back.read(buffer);
+	mid.read(buffer);
+	top.read(buffer);
+	top_lines.read(buffer);
+	bottom.read(buffer);
+	fog_front.read(buffer);
 }
 
 game_world::game_world() {
@@ -74,9 +100,16 @@ game_world::game_world() {
 	// Place the only chunk we use.
 	place_chunk(0, 0);
 
+	// Initialize backgrounds.
+	backgrounds.background.name = "Background";
+	backgrounds.trees.name = "Trees";
+	backgrounds.fog_back.name = "Fog (back)";
+	backgrounds.mid.name = "Middle";
+	backgrounds.top.name = "Top";
+	backgrounds.top_lines.name = "Top lines";
+	backgrounds.bottom.name = "Bottom";
+	backgrounds.fog_front.name = "Fog (front)";
 	backgrounds.set_default();
-	backgrounds.top.upwards = true;
-	backgrounds.top_lines.upwards = true;
 }
 
 void game_world::update() {
@@ -208,7 +241,7 @@ void game_world::draw(const ne::transform3f& view) {
 
 void game_world::write(ne::memory_buffer* buffer) {
 	buffer->write_float(ground_y);
-	buffer->write_int32(-2);
+	buffer->write_int32(-3);
 	buffer->write_int32(level_num);
 	buffer->write_uint8(backgrounds.background.is_visible ? 1 : 0);
 	buffer->write_uint8(backgrounds.trees.is_visible ? 1 : 0);
@@ -225,6 +258,7 @@ void game_world::write(ne::memory_buffer* buffer) {
 		buffer->write_int32(i.object_id);
 	}
 	buffer->write_float(base_light);
+	backgrounds.write(buffer);
 }
 
 void game_world::read(ne::memory_buffer* buffer) {
@@ -255,6 +289,10 @@ void game_world::read(ne::memory_buffer* buffer) {
 			lights.push_back({ intensity, color, object_id });
 		}
 		base_light = buffer->read_float();
+	}
+	if (version > 2) {
+		backgrounds = {};
+		backgrounds.read(buffer);
 	}
 }
 

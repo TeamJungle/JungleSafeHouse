@@ -49,6 +49,8 @@ public:
 		game_world_background fog_front;
 
 		void set_default();
+		void write(ne::memory_buffer* buffer);
+		void read(ne::memory_buffer* buffer);
 	} backgrounds;
 
 	game_world();

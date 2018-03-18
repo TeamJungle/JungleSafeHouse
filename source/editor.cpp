@@ -12,10 +12,7 @@ void editor_state::start_drag() {
 			drag.is_dragging = true;
 			drag.old_position = selected->transform.position.xy;
 			drag.new_position = drag.old_position;
-			drag.offset = {
-				camera_mouse.x - drag.old_position.x,
-				camera_mouse.y - drag.old_position.y
-			};
+			drag.offset = camera_mouse - drag.old_position;
 		}
 	}
 }
@@ -214,7 +211,7 @@ void editor_state::update() {
 	ImGui::PushItemWidth(-1);
 
 	// General info
-	ImGui::Text("Level: Safe house"); // TODO: Level name
+	ImGui::Text("Level: "); // TODO: Level name
 	ImGui::Text(CSTRING("Saved: " << (saved ? "Yes" : "No ")));
 	ImGui::SameLine();
 	ImVec4 col_good = { 0.2f, 1.0f, 0.4f, 0.7f };
@@ -222,64 +219,81 @@ void editor_state::update() {
 	ImVec4 col_now = (saved ? col_good : col_edit);
 	ImVec4 col_border = { col_now.x + 0.2f, col_now.y + 0.2f, col_now.z + 0.2f, col_now.w };
 	ImGui::Image((ImTextureID)textures.blank.id, { 10.0f, 10.0f }, { 0.0f, 0.0f }, { 1.0f, 1.0f }, col_now, col_border);
-	ImGui::Text("Level Number: ");
-	ImGui::SameLine();
-	//ImGui::InputInt("Level Number", &world.level_num);
-	ImGui::Text(CSTRING(world.level_num));
+	if (ImGui::CollapsingHeader("General", nullptr, true, true)) {
+		ImGui::Text("Level Number: ");
+		ImGui::SameLine();
+		//ImGui::InputInt("Level Number", &world.level_num);
+		ImGui::Text(CSTRING(world.level_num));
 #if !DEVELOPMENT_EDITOR
-	// Players should not be able to edit the safehouse or built-in levels.
-	if (world.level_num < 100) {
-		world.level_num = 100;
-	}
+		// Players should not be able to edit the safehouse or built-in levels.
+		if (world.level_num < 100) {
+			world.level_num = 100;
+		}
 #endif
-	int ground_y_int = (int)world.ground_y;
-	ImGui::Text("Ground: ");
-	ImGui::SameLine();
-	ImGui::InputInt("Ground", &ground_y_int);
-	if (ground_y_int < 1) {
-		ground_y_int = 1;
+		int ground_y_int = (int)world.ground_y;
+		ImGui::Text("Ground: ");
+		ImGui::SameLine();
+		ImGui::InputInt("Ground", &ground_y_int);
+		if (ground_y_int < 1) {
+			ground_y_int = 1;
+		}
+		world.ground_y = (float)ground_y_int;
+		ImGui::Checkbox("Draw collisions", &world.draw_collisions);
+		ImGui::Text(CSTRING("Objects: " << world.object_count()));
+		ImGui::SameLine();
+		ImGui::Text(CSTRING("Chunks: " << world.chunks.size()));
+		ImGui::Text("Grid:");
+		ImGui::SameLine();
+		ImGui::InputInt2("Grid", &grid.x);
+		if (grid.x < 1) {
+			grid.x = 1;
+		} else if (grid.x > 1000) {
+			grid.x = 1000;
+		}
+		if (grid.y < 1) {
+			grid.y = 1;
+		} else if (grid.y > 1000) {
+			grid.y = 1000;
+		}
+		ImGui::Text("Light");
+		ImGui::InputFloat("Base", &world.base_light);
+		if (world.base_light < 0.0f) {
+			world.base_light = 0.0f;
+		} else if (world.base_light > 1.0f) {
+			world.base_light = 1.0f;
+		}
 	}
-	world.ground_y = (float)ground_y_int;
-	ImGui::Checkbox("Draw collisions", &world.draw_collisions);
-	ImGui::Text(CSTRING("Objects: " << world.object_count()));
-	ImGui::SameLine();
-	ImGui::Text(CSTRING("Chunks: " << world.chunks.size()));
-	ImGui::Text("Grid:");
-	ImGui::SameLine();
-	ImGui::InputInt2("Grid", &grid.x);
-	if (grid.x < 1) {
-		grid.x = 1;
-	} else if (grid.x > 1000) {
-		grid.x = 1000;
-	}
-	if (grid.y < 1) {
-		grid.y = 1;
-	} else if (grid.y > 1000) {
-		grid.y = 1000;
-	}
-	ImGui::Separator();
 
-	ImGui::Text("Backgrounds");
-	ImGui::Checkbox("Back", &world.backgrounds.background.is_visible);
-	ImGui::SameLine();
-	ImGui::Checkbox("Distant trees", &world.backgrounds.trees.is_visible);
-	ImGui::Checkbox("Back fog", &world.backgrounds.fog_back.is_visible);
-	ImGui::SameLine();
-	ImGui::Checkbox("Trees", &world.backgrounds.mid.is_visible);
-	ImGui::Checkbox("Leaves", &world.backgrounds.top.is_visible);
-	ImGui::SameLine();
-	ImGui::Checkbox("Vines", &world.backgrounds.top_lines.is_visible);
-	ImGui::Checkbox("Grass", &world.backgrounds.bottom.is_visible);
-	ImGui::SameLine();
-	ImGui::Checkbox("Front fog", &world.backgrounds.fog_front.is_visible);
-	ImGui::Separator();
-
-	ImGui::Text("Light");
-	ImGui::InputFloat("Base", &world.base_light);
-	if (world.base_light < 0.0f) {
-		world.base_light = 0.0f;
-	} else if (world.base_light > 1.0f) {
-		world.base_light = 1.0f;
+	// Backgrounds
+	if (ImGui::CollapsingHeader("Backgrounds##WorldBackgrounds")) {
+		auto edit_background = [](game_world_background* background) {
+			if (ImGui::CollapsingHeader(background->name.c_str(), nullptr, true, false)) {
+				ImGui::Checkbox(CSTRING("Visible##BgVisible" << background->name), &background->is_visible);
+				ImGui::Text("Top");
+				ImGui::SameLine();
+				ImGui::InputFloat2(CSTRING("Top##BgTop" << background->name), &background->top_offset.x);
+				ImGui::Text("Bottom");
+				ImGui::SameLine();
+				ImGui::InputFloat2(CSTRING("Bottom##BgBottom" << background->name), &background->bottom_offset.x);
+				ImGui::Text("Zoom");
+				ImGui::SameLine();
+				ImGui::InputFloat(CSTRING("Zoom##BgZoom" << background->name), &background->zoom);
+				ImGui::Text("Speed");
+				ImGui::SameLine();
+				ImGui::InputFloat(CSTRING("Speed##BgSpeed" << background->name), &background->speed);
+				ImGui::Text("X Vary");
+				ImGui::SameLine();
+				ImGui::InputFloat(CSTRING("X Vary##BgXVary" << background->name), &background->x_vary);
+			}
+		};
+		edit_background(&world.backgrounds.background);
+		edit_background(&world.backgrounds.trees);
+		edit_background(&world.backgrounds.fog_back);
+		edit_background(&world.backgrounds.mid);
+		edit_background(&world.backgrounds.top);
+		edit_background(&world.backgrounds.top_lines);
+		edit_background(&world.backgrounds.bottom);
+		edit_background(&world.backgrounds.fog_front);
 	}
 
 	// Tools
