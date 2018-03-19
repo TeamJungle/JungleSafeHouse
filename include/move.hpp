@@ -14,6 +14,7 @@ public:
 	bool is_running = false;
 	int max_double_jumps = 1;
 	float max_jump_force = 10.0f;
+	float max_speed = 5.0f;
 
 	game_object_move_component(ne::game_object* parent) : ne::game_object_component(parent) {}
 

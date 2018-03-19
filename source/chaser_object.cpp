@@ -48,6 +48,13 @@ void chaser_object::update(ne::game_world* world, ne::game_world_chunk* chunk) {
 		}
 		return false;
 	});
+	if (settings::difficulty == DIFFICULTY_EASY) {
+		move->max_speed = 4.0f;
+	} else if (settings::difficulty == DIFFICULTY_NORMAL) {
+		move->max_speed = 5.0f;
+	} else if (settings::difficulty == DIFFICULTY_HARD) {
+		move->max_speed = 6.0f;
+	}
 	bool moved = move->move(world, left, right);
 	if (!moved) {
 		move->jump();

@@ -1,11 +1,12 @@
 #include "door_object.hpp"
 #include "game.hpp"
 #include "assets.hpp"
+#include "player_object.hpp"
 
 #include <game_world.hpp>
 
 void door_object::update(ne::game_world* world, ne::game_world_chunk* chunk) {
-	
+	is_near_player = world->first<player_object>()->collision_transform().collides_with(transform);
 }
 
 void door_object::draw() {
@@ -20,13 +21,30 @@ void door_object::draw() {
 	if (leads_to_level_num < 1 || is_open) {
 		return;
 	}
-	label.font = &fonts.hud;
-	label.render(std::to_string(leads_to_level_num));
-	label.transform.position.x = transform.position.x + transform.scale.width / 2.0f - label.transform.scale.width / 2.0f;
-	label.transform.position.y = transform.position.y + transform.scale.height / 2.0f - label.transform.scale.height / 6.0f;
+	level_label.font = &fonts.hud;
+	level_label.render(std::to_string(leads_to_level_num));
+	level_label.transform.position.x = transform.position.x + transform.scale.width / 2.0f - level_label.transform.scale.width / 2.0f;
+	level_label.transform.position.y = transform.position.y + transform.scale.height / 2.0f - level_label.transform.scale.height / 6.0f;
 	ne::shader::set_color(1.0f, 0.4f, 0.1f, 0.7f);
-	label.transform.rotation.z = transform.rotation.z;
-	label.draw();
+	level_label.transform.rotation.z = transform.rotation.z;
+	level_label.draw();
+	if (opening_cost > 0 && is_near_player) {
+		cost_label.font = &fonts.hud_small;
+		cost_label.render(std::to_string(opening_cost));
+		cost_label.transform.position.x = transform.position.x + transform.scale.width / 2.0f - cost_label.transform.scale.width / 2.0f;
+		cost_label.transform.position.y = transform.position.y + 8.0f;
+		cost_label.transform.rotation.z = transform.rotation.z;
+		ne::shader::set_color(0.9f, 0.8f, 0.1f, 1.0f);
+		cost_label.draw();
+		ne::shader::set_color(1.0f);
+		ne::transform3f coin_transform = cost_label.transform;
+		coin_transform.scale.xy = textures.objects.item[ITEM_COIN].frame_size().to<float>();
+		coin_transform.position.x -= coin_transform.scale.width + 4.0f;
+		textures.objects.item[ITEM_COIN].bind();
+		ne::shader::set_transform(&coin_transform);
+		animated_quad().bind();
+		coin_animation.draw();
+	}
 	ne::shader::set_color(1.0f);
 }
 

@@ -294,6 +294,11 @@ void editor_state::update() {
 		edit_background(&world.backgrounds.top_lines);
 		edit_background(&world.backgrounds.bottom);
 		edit_background(&world.backgrounds.fog_front);
+		ImGui::Separator();
+		if (ImGui::Button("Reset##ResetBgDefaults")) {
+			world.backgrounds = {};
+			world.backgrounds.set_default();
+		}
 	}
 
 	// Tools
@@ -397,8 +402,16 @@ void editor_state::update() {
 			bool has_light = false;
 			for (auto& i : world.lights) {
 				if (i.object_id == selected->id) {
-					ImGui::InputFloat3("Color", &i.color.x);
+					ImGui::ColorEdit3("Color", &i.color.x);
+					ImGui::Text("Intensity: ");
+					ImGui::SameLine();
 					ImGui::InputFloat("Intensity", &i.intensity);
+					ImGui::Text("Rotate speed: ");
+					ImGui::SameLine();
+					ImGui::InputFloat("Rotate speed", &i.rotate_speed);
+					ImGui::Text("Rotate distance: ");
+					ImGui::SameLine();
+					ImGui::InputFloat("Rotate distance", &i.rotate_distance);
 					has_light = true;
 					break;
 				}

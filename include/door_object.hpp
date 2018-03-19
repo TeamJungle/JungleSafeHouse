@@ -3,6 +3,7 @@
 #include "game_object_types.hpp"
 
 #include <game_object.hpp>
+#include <graphics.hpp>
 
 #define DOOR_REGULAR 0
 #define DOOR_YELLOW  1
@@ -20,6 +21,9 @@ public:
 
 private:
 
-	ne::font_text label;
+	ne::font_text level_label;
+	ne::font_text cost_label;
+	ne::sprite_animation coin_animation;
+	bool is_near_player = false;
 
 };

@@ -22,6 +22,10 @@ public:
 	ne::vector3f color = { 1.0f, 0.9f, 0.8f };
 	int object_id = -1;
 
+	float rotate_current = 0.0f;
+	float rotate_speed = 0.0f;
+	float rotate_distance = 0.0f;
+
 	void bind(int index, game_world* world);
 
 };

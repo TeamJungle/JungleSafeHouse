@@ -19,6 +19,10 @@ void point_light::bind(int index, game_world* world) {
 		return;
 	}
 	ne::vector2f position = object->transform.position.xy + object->transform.scale.xy / 2.0f;
+	position.x += std::cos(rotate_current) * rotate_distance;
+	position.y += std::sin(rotate_current) * rotate_distance;
+	rotate_current += rotate_speed;
+
 	std::string index_str = std::to_string(index);
 	ne::ortho_camera* camera = ne::ortho_camera::bound();
 	glm::mat4 view = ortho_view(camera->transform.position, camera->transform.rotation.z, camera->zoom);
@@ -32,6 +36,16 @@ void point_light::bind(int index, game_world* world) {
 }
 
 void game_world::world_backgrounds::set_default() {
+	// Set names.
+	background.name = "Background";
+	trees.name = "Trees";
+	fog_back.name = "Fog (back)";
+	mid.name = "Middle";
+	top.name = "Top";
+	top_lines.name = "Top lines";
+	bottom.name = "Bottom";
+	fog_front.name = "Fog (front)";
+
 	// Configure backgrounds
 	background.top_offset.y = -300.0f;
 	background.zoom = 0.5f;
@@ -100,15 +114,6 @@ game_world::game_world() {
 	// Place the only chunk we use.
 	place_chunk(0, 0);
 
-	// Initialize backgrounds.
-	backgrounds.background.name = "Background";
-	backgrounds.trees.name = "Trees";
-	backgrounds.fog_back.name = "Fog (back)";
-	backgrounds.mid.name = "Middle";
-	backgrounds.top.name = "Top";
-	backgrounds.top_lines.name = "Top lines";
-	backgrounds.bottom.name = "Bottom";
-	backgrounds.fog_front.name = "Fog (front)";
 	backgrounds.set_default();
 }
 
@@ -143,6 +148,7 @@ void game_world::update() {
 			if (player->collision_transform().collides_with(chaser->collision_transform())) {
 				destroy_object(player->id, nullptr);
 				settings::play(&audio.tiger, 0.15f);
+				change(0);
 				return false;
 			}
 			return true;
@@ -154,6 +160,7 @@ void game_world::update() {
 		alive = each_if<spikes_object>([&](auto spikes) {
 			if (player->collision_transform().collides_with(spikes->collision_transform())) {
 				destroy_object(player->id, nullptr);
+				change(0);
 				return false;
 			}
 			return true;
@@ -241,7 +248,7 @@ void game_world::draw(const ne::transform3f& view) {
 
 void game_world::write(ne::memory_buffer* buffer) {
 	buffer->write_float(ground_y);
-	buffer->write_int32(-3);
+	buffer->write_int32(-4);
 	buffer->write_int32(level_num);
 	buffer->write_uint8(backgrounds.background.is_visible ? 1 : 0);
 	buffer->write_uint8(backgrounds.trees.is_visible ? 1 : 0);
@@ -256,6 +263,8 @@ void game_world::write(ne::memory_buffer* buffer) {
 		buffer->write_float(i.intensity);
 		buffer->write_vector3f(i.color);
 		buffer->write_int32(i.object_id);
+		buffer->write_float(i.rotate_speed);
+		buffer->write_float(i.rotate_distance);
 	}
 	buffer->write_float(base_light);
 	backgrounds.write(buffer);
@@ -286,7 +295,13 @@ void game_world::read(ne::memory_buffer* buffer) {
 			float intensity = buffer->read_float();
 			ne::vector3f color = buffer->read_vector3f();
 			int32 object_id = buffer->read_int32();
-			lights.push_back({ intensity, color, object_id });
+			float rotate_speed = 0.0f;
+			float rotate_distance = 0.0f;
+			if (version > 3) {
+				rotate_speed = buffer->read_float();
+				rotate_distance = buffer->read_float();
+			}
+			lights.push_back({ intensity, color, object_id, 0.0f, rotate_speed, rotate_distance });
 		}
 		base_light = buffer->read_float();
 	}

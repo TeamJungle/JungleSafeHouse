@@ -118,7 +118,7 @@ bool game_object_move_component::move(ne::game_world* world, bool left, bool rig
 		}
 	}
 	is_running = true;
-	if (speed < 5.0f) {
+	if (speed < max_speed) {
 		speed += acceleration;
 	}
 	bool not_collided = world->each_if<platform_object>([&](auto platform) {
