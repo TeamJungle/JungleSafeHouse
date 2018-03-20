@@ -17,26 +17,45 @@ void editor_state::start_drag() {
 	}
 }
 
-editor_state::editor_state() {
-	ne::initialize_imgui();
-	camera.zoom = 2.0f;
-
-	int level_num = 0;
-	if (ne::file_exists("worlds/local/editor.txt")) {
-		std::string config = ne::read_file("worlds/local/editor.txt");
-		level_num = std::stoi(config);
-	}
-#if _DEBUG
+void editor_state::change_world(int level_num) {
+#if DEVELOPMENT_EDITOR
 	std::string world_path = STRING("worlds/local/" << level_num << ".world");
 #else
 	std::string world_path = STRING("worlds/" << level_num << ".world");
 #endif
-
 	if (ne::file_exists(world_path)) {
 		world.load(world_path);
 	} else {
+		world.reset();
+		world.init();
 		world.level_num = level_num;
 	}
+	drag = {};
+	selected = nullptr;
+	camera.transform.position.xy = 0.0f;
+}
+
+int editor_state::next_free_level_num() const {
+#if DEVELOPMENT_EDITOR
+	int num = 0;
+	std::string path_prefix = "worlds/local/";
+#else
+	int num = 100;
+	std::string path_prefix = "worlds/";
+#endif
+	for (int i = num; i < 1000; i++) {
+		if (!ne::file_exists(STRING(path_prefix << i << ".world"))) {
+			return i;
+		}
+	}
+	return 1000;
+}
+
+editor_state::editor_state() {
+	ne::initialize_imgui();
+	camera.zoom = 2.0f;
+
+	change_world(0);
 
 	place_meta = world.definitions.objects.meta->get_meta(0, 0);
 
@@ -100,7 +119,7 @@ editor_state::editor_state() {
 				object->transform.rotation.z = object_rotation;
 				object->transform.scale.x *= object_scale;
 				object->transform.scale.y *= object_scale;
-				if (object->type() == OBJECT_TYPE_DECORATION) {
+				if (object->type() == OBJECT_TYPE_DECORATION || object->type() == OBJECT_TYPE_VINE) {
 					object->collision.offset = 0.0f;
 					object->collision.size = 0.0f;
 				} else {
@@ -210,8 +229,20 @@ void editor_state::update() {
 	);
 	ImGui::PushItemWidth(-1);
 
+	// Level management
+	if (ImGui::CollapsingHeader("Load level")) {
+		if (level_num == -1) {
+			level_num = next_free_level_num();
+		}
+		if (ImGui::Button("Load##LoadLevel")) {
+			change_world(level_num);
+		}
+		ImGui::SameLine();
+		ImGui::InputInt("Level##LevelToLoad", &level_num);
+	}
+	ImGui::Separator();
+
 	// General info
-	ImGui::Text("Level: "); // TODO: Level name
 	ImGui::Text(CSTRING("Saved: " << (saved ? "Yes" : "No ")));
 	ImGui::SameLine();
 	ImVec4 col_good = { 0.2f, 1.0f, 0.4f, 0.7f };
@@ -222,7 +253,6 @@ void editor_state::update() {
 	if (ImGui::CollapsingHeader("General", nullptr, true, true)) {
 		ImGui::Text("Level Number: ");
 		ImGui::SameLine();
-		//ImGui::InputInt("Level Number", &world.level_num);
 		ImGui::Text(CSTRING(world.level_num));
 #if !DEVELOPMENT_EDITOR
 		// Players should not be able to edit the safehouse or built-in levels.
@@ -398,7 +428,6 @@ void editor_state::update() {
 		if (world.lights.size() >= 20) {
 			ImGui::Text("Cannot add light to this object. Limit reached.");
 		} else {
-			// TODO: Maybe not use for loop here, but doesn't really hurt.
 			bool has_light = false;
 			for (auto& i : world.lights) {
 				if (i.object_id == selected->id) {
@@ -421,6 +450,15 @@ void editor_state::update() {
 					world.lights.push_back({});
 					world.lights.back().object_id = selected->id;
 				}
+			} else {
+				if (ImGui::Button("Remove##RemoveLight")) {
+					for (size_t i = 0; i < world.lights.size(); i++) {
+						if (world.lights[i].object_id == selected->id) {
+							world.lights.erase(world.lights.begin() + i);
+							break;
+						}
+					}
+				}
 			}
 		}
 		ImGui::Separator();
@@ -439,6 +477,9 @@ void editor_state::update() {
 			auto decoration = (decoration_object*)selected;
 			ImGui::Checkbox("Flip X", &decoration->flip_x);
 			ImGui::Checkbox("Flip Y", &decoration->flip_y);
+		} else if (selected->type() == OBJECT_TYPE_VINE) {
+			auto vine = (decoration_object*)selected;
+			ImGui::Checkbox("Flip X", &vine->flip_x);
 		}
 		break;
 	}
@@ -550,7 +591,7 @@ void editor_state::draw() {
 }
 
 void editor_state::save() {
-#if _DEBUG
+#if DEVELOPMENT_EDITOR
 	std::string path = STRING("worlds/local/" << world.level_num << ".world");
 #else
 	std::string path = STRING("worlds/" << world.level_num << ".world");

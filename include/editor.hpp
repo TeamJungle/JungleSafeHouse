@@ -33,6 +33,9 @@ public:
 private:
 	
 	void save();
+	void change_world(int level_num);
+
+	int next_free_level_num() const;
 
 	bool saved = true;
 	int tool = EDITOR_TOOL_SELECT;
@@ -63,5 +66,7 @@ private:
 	ne::vector2i grid = 8;
 
 	ne::debug_info debug;
+
+	int level_num = -1;
 
 };

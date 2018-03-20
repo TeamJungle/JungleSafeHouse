@@ -127,6 +127,11 @@ void texture_assets::initialize() {
 	group("objects/npc");
 	load({ &objects.npc[NPC_MONKEY], "monkey.png", 3 });
 
+	group("objects/vine");
+	for (int i = 0; i < TOTAL_VINES; i++) {
+		load({ &objects.vine[i], STRING(i << ".png") });
+	}
+
 	group("bg");
 	load({ &bg.menu, "menu.png" });
 	load({ &bg.high_dark, "high_dark.png" });
@@ -178,4 +183,7 @@ void audio_assets::initialize() {
 	load({ &monkey, "monkey.wav" });
 	load({ &tiger, "tiger.ogg" });
 	load({ &door, "door.ogg" });
+	for (int i = 0; i < 3; i++) {
+		load({ &vine[i], STRING("vine" << i << ".wav") });
+	}
 }

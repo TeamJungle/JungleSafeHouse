@@ -7,6 +7,7 @@
 #include "door_object.hpp"
 #include "spikes_object.hpp"
 #include "npc_object.hpp"
+#include "vine_object.hpp"
 
 void game_object_definitions::initialize() {
 	meta.insert(meta.begin(), TOTAL_OBJECT_TYPES, {});
@@ -70,6 +71,11 @@ void game_object_definitions::initialize() {
 	// NPCs
 	define<npc_object>(NPC_MONKEY, "Monkey", 0);
 
+	// Vines
+	define<vine_object>(VINE_1, "Vine (1)", 0);
+	define<vine_object>(VINE_2, "Vine (2)", 0);
+	define<vine_object>(VINE_FLOWER, "Vine (Flower)", 0);
+
 	// Put into categories
 	categories.push_back("Player");
 	categories.push_back("Chaser");
@@ -79,6 +85,7 @@ void game_object_definitions::initialize() {
 	categories.push_back("Door");
 	categories.push_back("Spikes");
 	categories.push_back("NPCs");
+	categories.push_back("Vines");
 	category_objects[OBJECT_TYPE_PLAYER].push_back({ OBJECT_TYPE_PLAYER, 0 });
 	for (int i = 0; i < TOTAL_CHASERS; i++) {
 		category_objects[OBJECT_TYPE_CHASER].push_back({ OBJECT_TYPE_CHASER, i });
@@ -98,5 +105,8 @@ void game_object_definitions::initialize() {
 	}
 	for (int i = 0; i < TOTAL_NPCS; i++) {
 		category_objects[OBJECT_TYPE_NPC].push_back({ OBJECT_TYPE_NPC, i });
+	}
+	for (int i = 0; i < TOTAL_VINES; i++) {
+		category_objects[OBJECT_TYPE_VINE].push_back({ OBJECT_TYPE_VINE, i });
 	}
 }

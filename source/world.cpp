@@ -108,12 +108,13 @@ void game_world::world_backgrounds::read(ne::memory_buffer* buffer) {
 game_world::game_world() {
 	definitions.objects.meta = new game_object_definitions();
 	definitions.objects.meta->initialize();
-
 	shop.world = this;
+	init();
+}
 
-	// Place the only chunk we use.
+void game_world::init() {
 	place_chunk(0, 0);
-
+	backgrounds = {};
 	backgrounds.set_default();
 }
 
@@ -133,7 +134,7 @@ void game_world::update() {
 				// TODO: Clean.
 				{
 					static int last_pickup_sound = 0;
-					settings::play(&audio.pickup[last_pickup_sound], 0.01f);
+					settings::play(&audio.pickup[last_pickup_sound], 0.02f);
 					last_pickup_sound++;
 					if (last_pickup_sound > 4) {
 						last_pickup_sound = 0;
@@ -166,6 +167,13 @@ void game_world::update() {
 			return true;
 		});
 		return alive;
+	});
+	each_if<vine_object>([this](auto vine) {
+		if (vine->health < 0.01f) {
+			destroy_object(vine->id, nullptr);
+			return false;
+		}
+		return true;
 	});
 
 	// Change world.
@@ -326,4 +334,12 @@ void game_world::after_load() {
 			});
 		});
 	}
+}
+
+void game_world::reset() {
+	ne::game_world::reset();
+	ground_y = 600.0f;
+	level_num = -1;
+	base_light = 1.0f;
+	lights.clear();
 }

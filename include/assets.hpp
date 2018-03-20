@@ -5,6 +5,7 @@
 #include "door_object.hpp"
 #include "spikes_object.hpp"
 #include "npc_object.hpp"
+#include "vine_object.hpp"
 
 #include <asset.hpp>
 #include <audio.hpp>
@@ -39,6 +40,7 @@ public:
 		} door;
 		ne::texture spikes[TOTAL_SPIKES];
 		ne::texture npc[TOTAL_NPCS];
+		ne::texture vine[TOTAL_VINES];
 	} objects;
 
 	struct {
@@ -102,6 +104,7 @@ public:
 	ne::sound monkey;
 	ne::sound tiger;
 	ne::sound door;
+	ne::sound vine[3];
 
 	void initialize();
 

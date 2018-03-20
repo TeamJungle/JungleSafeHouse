@@ -24,5 +24,7 @@ private:
 	int state = 0;
 
 	game_save_data* save_data = nullptr;
+	
+	int vine_sound = 0;
 
 };

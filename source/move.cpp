@@ -121,6 +121,9 @@ bool game_object_move_component::move(ne::game_world* world, bool left, bool rig
 	if (speed < max_speed) {
 		speed += acceleration;
 	}
+	if (speed > max_speed) {
+		speed = max_speed;
+	}
 	bool not_collided = world->each_if<platform_object>([&](auto platform) {
 		ne::transform3f t = parent->collision_transform();
 		t.position.y -= 2.0f;

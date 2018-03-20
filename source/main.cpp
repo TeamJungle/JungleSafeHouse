@@ -109,6 +109,14 @@ void start() {
 		return { nullptr };
 	});
 
+	ne::game_object_factory::define(OBJECT_TYPE_VINE, [] {
+		return new vine_object();
+	}, [](int subtype) {
+		return &textures.objects.vine[subtype];
+	}, [](int subtype) -> std::vector<ne::texture*> {
+		return { nullptr };
+	});
+
 	// Turn off VSync.
 	// TODO: Ensure this is set to 'sync' on releases.
 	ne::set_swap_interval(ne::swap_interval::immediate);

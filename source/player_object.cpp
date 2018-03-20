@@ -83,11 +83,34 @@ void player_object::update(ne::game_world* world, ne::game_world_chunk* chunk) {
 				settings::play(&audio.door, 0.15f);
 				return false;
 			});
+			if (!no_action) {
+				return;
+			}
+			if (w->save_data->has_machete()) {
+				w->each<vine_object>([&](auto vine) {
+					if (!collision_transform().collides_with(vine->transform)) {
+						return;
+					}
+					vine->health -= 0.4f;
+					settings::play(&audio.vine[vine_sound++], 0.05f);
+					if (vine_sound > 2) {
+						vine_sound = 0;
+					}
+				});
+			}
 		});
 	}
 	if (w->shop.is_open) {
 		return;
 	}
+	move->max_speed = 5.0f;
+	w->each_if<vine_object>([&](auto vine) {
+		if (!collision_transform().collides_with(vine->transform)) {
+			return true;
+		}
+		move->max_speed = 2.0f;
+		return false;
+	});
 	bool up = input().up.is_active();
 	bool left = input().left.is_active();
 	bool down = input().down.is_active();

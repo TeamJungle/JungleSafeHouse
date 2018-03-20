@@ -67,11 +67,15 @@ public:
 
 	void change(int level_num);
 	void after_load() override;
+	void reset() override;
 
 	shop_ui shop;
+
+	void init();
 
 private:
 
 	int change_to_level_num = -1;
 	
+
 };

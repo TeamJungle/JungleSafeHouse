@@ -10,7 +10,8 @@
 #define OBJECT_TYPE_DOOR        5
 #define OBJECT_TYPE_SPIKES      6
 #define OBJECT_TYPE_NPC         7
-#define TOTAL_OBJECT_TYPES      8
+#define OBJECT_TYPE_VINE        8
+#define TOTAL_OBJECT_TYPES      9
 
 class game_object_definitions : public ne::game_object_definitions {
 public:

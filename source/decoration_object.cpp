@@ -26,8 +26,8 @@ void decoration_object::draw() {
 
 void decoration_object::write(ne::memory_buffer* buffer) {
 	ne::game_object::write(buffer);
-	buffer->write_uint8((flip_x ? 1 : 0));
-	buffer->write_uint8((flip_y ? 1 : 0));
+	buffer->write_uint8(flip_x ? 1 : 0);
+	buffer->write_uint8(flip_y ? 1 : 0);
 }
 
 void decoration_object::read(ne::memory_buffer* buffer) {
