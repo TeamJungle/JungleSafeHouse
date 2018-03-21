@@ -3,6 +3,7 @@
 #include "game_object_types.hpp"
 
 #include <game_object.hpp>
+#include <timer.hpp>
 
 class game_state;
 class game_world;
@@ -27,6 +28,9 @@ public:
 
 	void stop();
 
+	bool is_colliding_above(ne::game_world* world);
+	bool is_colliding_below(ne::game_world* world);
+
 private:
 
 	void apply_gravity(ne::game_world* world);
@@ -39,6 +43,6 @@ private:
 	float acceleration = 0.2f;
 	float speed = 0.0f;
 
-	float slide_left = 0.0f;
+	ne::timer slide_timer;
 
 };

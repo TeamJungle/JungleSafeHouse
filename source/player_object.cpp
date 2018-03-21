@@ -133,11 +133,15 @@ void player_object::draw() {
 		state = 1;
 	}
 	if (move->is_sliding) {
-		// TODO: Animation should play once (leaving it on the last frame)
 		sprite = &textures.objects.player.slide[direction];
 		machete = &textures.objects.machete.slide[direction];
 		animation.fps = 14.0f;
 		state = 2;
+		// A bit hackish solution to prevent the animation from looping.
+		if (animation.frame > 7) {
+			animation.frame = 7;
+			animation.sub_frame = 7.0f;
+		}
 	}
 	if (move->is_jumping()) {
 		sprite = &textures.objects.player.jump[direction];
