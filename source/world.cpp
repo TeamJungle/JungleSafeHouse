@@ -319,8 +319,12 @@ void game_world::read(ne::memory_buffer* buffer) {
 	}
 }
 
-void game_world::change(int level_num) {
-	change_to_level_num = level_num;
+void game_world::change(int to_level_num) {
+	if (level_num == 0 && to_level_num == 0) {
+		first<player_object>()->transform.position.x = 3300.0f;
+		return;
+	}
+	change_to_level_num = to_level_num;
 }
 
 void game_world::after_load() {
@@ -333,6 +337,24 @@ void game_world::after_load() {
 				}
 			});
 		});
+		// Add doors for the user levels.
+		float x = 3400.0f;
+		for (int i = 100; i < 1000; i++) {
+#if _DEBUG
+			std::string path = STRING("worlds/local/" << i << ".world");
+#else
+			std::string path = STRING("worlds/" << i << ".world");
+#endif
+			if (!ne::file_exists(path)) {
+				continue;
+			}
+			auto meta = definitions.objects.meta->get_meta(OBJECT_TYPE_DOOR, DOOR_REGULAR);
+			auto door = (door_object*)spawn(meta, { x, 520.0f });
+			door->leads_to_level_num = i;
+			door->transform.scale.x /= 2.0f;
+			door->transform.scale.y /= 2.0f;
+			x += 160.0f;
+		}
 	}
 }
 

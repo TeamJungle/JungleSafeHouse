@@ -48,6 +48,10 @@ void game_object_definitions::initialize() {
 	define<decoration_object>(DECORATION_LOG_HOLLOW_BACK, "Log hollow back", 0);
 	define<decoration_object>(DECORATION_SAFEHOUSE_WALL, "Safe house wall", 0);
 	define<decoration_object>(DECORATION_TUTORIAL_ROCK, "Tutorial rock", 0);
+	define<decoration_object>(DECORATION_LOG_2, "Log (2)", 0);
+	define<decoration_object>(DECORATION_LOG_3, "Log (3)", 0);
+	define<decoration_object>(DECORATION_GRAVE, "Grave", 0);
+	define<decoration_object>(DECORATION_FENCE, "Fence", 0);
 
 	// Items
 	define<item_object>(ITEM_COIN, "Coin", 0);
