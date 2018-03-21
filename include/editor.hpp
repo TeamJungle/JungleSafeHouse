@@ -51,6 +51,7 @@ private:
 		ne::vector2f offset;
 		ne::vector2f old_position;
 		ne::vector2f new_position;
+		bool actual_drag = false;
 	} drag;
 	void start_drag();
 

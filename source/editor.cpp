@@ -13,6 +13,7 @@ void editor_state::start_drag() {
 			drag.old_position = selected->transform.position.xy;
 			drag.new_position = drag.old_position;
 			drag.offset = camera_mouse - drag.old_position;
+			drag.actual_drag = false;
 		}
 	}
 }
@@ -92,6 +93,10 @@ editor_state::editor_state() {
 				return;
 			}
 			if (drag.is_dragging) {
+				if (!drag.actual_drag) {
+					drag.actual_drag = true;
+					return;
+				}
 				saved = false;
 			}
 			drag = {};
@@ -101,10 +106,13 @@ editor_state::editor_state() {
 		// The last object is more likely to be the one we want to act on.
 		ne::game_object* last = (objects.size() > 0 ? objects.back() : nullptr);
 		switch (tool) {
-		case EDITOR_TOOL_SELECT:
+		case EDITOR_TOOL_SELECT: {
+			bool actual = (selected == last);
 			selected = last;
 			start_drag();
+			drag.actual_drag = actual;
 			break;
+		}
 		case EDITOR_TOOL_PLACE: {
 			ne::texture* texture = ne::game_object_factory::default_texture(place_meta);
 			ne::vector2f place_position = camera.mouse();
@@ -527,7 +535,7 @@ void editor_state::update() {
 	ImGui::End();
 	ImGui::PopStyleColor();
 
-	if (drag.is_dragging && ne::is_mouse_button_down(MOUSE_BUTTON_LEFT)) {
+	if (drag.is_dragging && drag.actual_drag && ne::is_mouse_button_down(MOUSE_BUTTON_LEFT)) {
 		ne::vector2f mouse = camera.mouse();
 		mouse.floor();
 		drag.new_position = {
