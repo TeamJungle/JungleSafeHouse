@@ -51,8 +51,8 @@ private:
 		ne::vector2f offset;
 		ne::vector2f old_position;
 		ne::vector2f new_position;
-		bool actual_drag = false;
 	} drag;
+	bool click_to_drag = false;
 	void start_drag();
 
 	struct {
