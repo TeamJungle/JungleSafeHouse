@@ -149,7 +149,7 @@ void game_state::update() {
 
 	/*gems_label.font = &fonts.hud;
 	gems_label.render(STRING(save_data.get_gem()));
-	coins_label.transform.position.x = ui_camera.width() / 2.0f - gems_label.transform.scale.width / 2.0f - textures.ui.gem.size.to<float>().x / 2.0f;*/
+	gems_label.transform.position.x = ui_camera.width() / 2.0f - gems_label.transform.scale.width / 2.0f - textures.ui.gem.size.to<float>().x / 2.0f;*/
 
 
 	debug.set(&fonts.debug, STRING(

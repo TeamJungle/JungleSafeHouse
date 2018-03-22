@@ -130,7 +130,12 @@ void game_world::update() {
 				if (!item->collision_transform().collides_with(player->collision_transform())) {
 					return true;
 				}
-				save_data->add_coins(5);
+				if (item->subtype == ITEM_GEM) {
+					save_data->add_gem(1);
+				} else {
+					save_data->add_coins(5);
+				}
+				
 				// TODO: Clean.
 				{
 					static int last_pickup_sound = 0;
