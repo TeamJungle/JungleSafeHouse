@@ -8,7 +8,8 @@
 #define DOOR_REGULAR 0
 #define DOOR_YELLOW  1
 #define DOOR_RED     2
-#define TOTAL_DOORS  3
+#define DOOR_GEM     3
+#define TOTAL_DOORS  4
 
 class door_object : public ne::game_object {
 public:
@@ -18,6 +19,7 @@ public:
 	bool is_open = false;
 	int leads_to_level_num = 0;
 	int opening_cost = 0;
+	int opening_gem_cost = 0;
 
 private:
 

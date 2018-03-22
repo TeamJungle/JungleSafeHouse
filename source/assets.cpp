@@ -112,6 +112,8 @@ void texture_assets::initialize() {
 	load({ &objects.item[ITEM_MANDARIN], "mandarin.png" });
 	load({ &objects.item[ITEM_PEAR], "pear.png" });
 	load({ &objects.item[ITEM_STRAWBERRY], "strawberry.png" });
+	load({ &objects.item[ITEM_GEM], "gem.png",1 });
+
 
 	group("objects/door");
 	load({ &objects.door.open, "open.png" });

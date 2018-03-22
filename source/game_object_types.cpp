@@ -59,6 +59,7 @@ void game_object_definitions::initialize() {
 	define<item_object>(ITEM_MANDARIN, "Mandarin", 0);
 	define<item_object>(ITEM_PEAR, "Pear", 0);
 	define<item_object>(ITEM_STRAWBERRY, "Strawberry", 0);
+	define<item_object>(ITEM_GEM, "Gem", 0);
 
 	// Platforms
 	define<platform_object>(0, "Platform", 0);
@@ -67,6 +68,7 @@ void game_object_definitions::initialize() {
 	define<door_object>(DOOR_REGULAR, "Regular door", 0);
 	define<door_object>(DOOR_YELLOW, "Yellow door", 0);
 	define<door_object>(DOOR_RED, "Red door", 0);
+	define<door_object>(DOOR_GEM, "Gem door", 0);
 
 	// Spikes
 	define<spikes_object>(SPIKES_1, "Spikes (1)", 0);
