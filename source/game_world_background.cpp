@@ -8,6 +8,7 @@ void game_world_background::draw(const ne::transform3f& view, ne::texture* textu
 	assert(texture);
 	ne::transform3f transform;
 	transform.scale.xy = texture->size.to<float>() * zoom;
+	transform.scale.xy.ceil();
 	texture->bind();
 	still_quad().bind();
 	if ((int)transform.scale.width == 0) {
