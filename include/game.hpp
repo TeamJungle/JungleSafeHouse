@@ -10,8 +10,13 @@
 
 class player_object;
 
+#define LEVEL_IS_LOCKED    0
+#define LEVEL_IS_UNLOCKED  1
+#define LEVEL_IS_COMPLETED 2
+
 struct level_complete_data {
 	int num = 0;
+	int state = LEVEL_IS_LOCKED;
 };
 
 class game_save_data {
@@ -22,6 +27,7 @@ public:
 
 	bool is_level_completed(int num) const;
 	void complete_level(int num);
+	void unlock_level(int num);
 	void each_completed_level(const std::function<void(int, level_complete_data)>& func);
 	bool is_saved() const;
 	bool must_be_saved() const;
@@ -38,7 +44,7 @@ private:
 	bool saved = true;
 	bool must_save = false;
 	int32 coins = 0;
-	std::unordered_map<int, level_complete_data> levels_completed;
+	std::unordered_map<int, level_complete_data> levels;
 	bool item_machete = false;
 
 };

@@ -185,6 +185,7 @@ void game_world::update() {
 #endif
 		if (ne::file_exists(path)) {
 			load(path);
+			level_num = change_to_level_num; // just in case of old level num
 		} else {
 			ne::show_message("world \"" + path + "\" does not exist.");
 		}
@@ -321,7 +322,10 @@ void game_world::read(ne::memory_buffer* buffer) {
 
 void game_world::change(int to_level_num) {
 	if (level_num == 0 && to_level_num == 0) {
-		first<player_object>()->transform.position.x = 3300.0f;
+		auto player = first<player_object>();
+		if (player) {
+			player->transform.position.x = 3600.0f;
+		}
 		return;
 	}
 	change_to_level_num = to_level_num;
@@ -332,13 +336,13 @@ void game_world::after_load() {
 		// Open the doors for completed levels in the safehouse.
 		save_data->each_completed_level([&](int key, level_complete_data complete_data) {
 			each<door_object>([&](auto door) {
-				if (key == door->leads_to_level_num) {
+				if (key == door->leads_to_level_num && complete_data.state != LEVEL_IS_LOCKED) {
 					door->is_open = true;
 				}
 			});
 		});
 		// Add doors for the user levels.
-		float x = 3400.0f;
+		float x = 3700.0f;
 		for (int i = 100; i < 1000; i++) {
 #if _DEBUG
 			std::string path = STRING("worlds/local/" << i << ".world");

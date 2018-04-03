@@ -9,9 +9,10 @@
 void game_save_data::write(ne::memory_buffer* buffer) {
 	buffer->write_int32(coins);
 	buffer->write_uint8(item_machete ? 1 : 0);
-	buffer->write_uint32(levels_completed.size());
-	for (auto& i : levels_completed) {
+	buffer->write_uint32(levels.size());
+	for (auto& i : levels) {
 		buffer->write_int32(i.second.num);
+		buffer->write_int32(i.second.state);
 	}
 }
 
@@ -19,29 +20,39 @@ void game_save_data::read(ne::memory_buffer* buffer) {
 	coins = buffer->read_int32();
 	item_machete = (buffer->read_uint8() != 0);
 	uint32 levels_done = buffer->read_uint32();
-	levels_completed.clear();
+	levels.clear();
 	for (uint32 i = 0; i < levels_done; i++) {
 		int32 num = buffer->read_int32();
-		levels_completed[num] = { num };
+		int32 state = buffer->read_int32();
+		levels[num] = { num, state };
 	}
 }
 
 bool game_save_data::is_level_completed(int num) const {
-	return levels_completed.find(num) != levels_completed.end();
+	return levels.find(num) != levels.end() && levels.find(num)->second.state == LEVEL_IS_COMPLETED;
 }
 
 void game_save_data::complete_level(int num) {
 	if (num == 0 || is_level_completed(num)) {
 		return;
 	}
-	levels_completed[num] = { num };
+	levels[num] = { num, LEVEL_IS_COMPLETED };
 	coins += 250;
 	saved = false;
 	must_save = true;
 }
 
+void game_save_data::unlock_level(int num) {
+	if (num == 0 || is_level_completed(num)) {
+		return;
+	}
+	levels[num] = { num, LEVEL_IS_UNLOCKED };
+	saved = false;
+	must_save = true;
+}
+
 void game_save_data::each_completed_level(const std::function<void(int, level_complete_data)>& func) {
-	for (auto& i : levels_completed) {
+	for (auto& i : levels) {
 		func(i.first, i.second);
 	}
 }
