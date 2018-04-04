@@ -475,6 +475,11 @@ void editor_state::update() {
 			ImGui::Text("Cost: ");
 			ImGui::SameLine();
 			ImGui::InputInt("Cost to open", &door->opening_cost);
+
+			ImGui::Text("Gem cost: ");
+			ImGui::SameLine();
+			ImGui::InputInt("Gem cost to open", &door->opening_gem_cost);
+
 		} else if (selected->type() == OBJECT_TYPE_DECORATION) {
 			auto decoration = (decoration_object*)selected;
 			ImGui::Checkbox("Flip X", &decoration->flip_x);

@@ -31,7 +31,7 @@ void door_object::draw() {
 	ne::shader::set_color(1.0f, 0.4f, 0.1f, 0.7f);
 	level_label.transform.rotation.z = transform.rotation.z;
 	level_label.draw();
-	if (opening_cost > 0 && is_near_player) {
+	if (opening_cost > 0 || opening_gem_cost > 0 && is_near_player) {
 		cost_label.font = &fonts.hud_small;
 		cost_label.render(std::to_string(opening_cost));
 		cost_label.transform.position.x = transform.position.x + transform.scale.width / 2.0f - cost_label.transform.scale.width / 2.0f;
@@ -56,6 +56,7 @@ void door_object::write(ne::memory_buffer* buffer) {
 	buffer->write_uint8((is_open ? 1 : 0));
 	buffer->write_int32(leads_to_level_num);
 	buffer->write_int32(opening_cost);
+	buffer->write_int32(opening_gem_cost);
 }
 
 void door_object::read(ne::memory_buffer* buffer) {
@@ -63,4 +64,5 @@ void door_object::read(ne::memory_buffer* buffer) {
 	is_open = (buffer->read_uint8() != 0);
 	leads_to_level_num = buffer->read_int32();
 	opening_cost = buffer->read_int32();
+	opening_gem_cost = buffer->read_int32();
 }

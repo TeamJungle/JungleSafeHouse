@@ -9,7 +9,8 @@
 #define ITEM_MANDARIN   2
 #define ITEM_PEAR       3
 #define ITEM_STRAWBERRY 4
-#define TOTAL_ITEMS     5
+#define ITEM_GEM        5
+#define TOTAL_ITEMS     6
 
 class item_object : public ne::game_object {
 public:

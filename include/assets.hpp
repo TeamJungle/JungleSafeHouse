@@ -65,6 +65,7 @@ public:
 		ne::texture shop;
 		ne::texture button;
 		ne::texture coin;
+		ne::texture gem;
 		ne::texture machete;
 	} ui;
 

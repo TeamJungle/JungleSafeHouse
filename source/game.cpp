@@ -8,6 +8,7 @@
 
 void game_save_data::write(ne::memory_buffer* buffer) {
 	buffer->write_int32(coins);
+	buffer->write_int32(gems);
 	buffer->write_uint8(item_machete ? 1 : 0);
 	buffer->write_uint32(levels.size());
 	for (auto& i : levels) {
@@ -75,9 +76,20 @@ void game_save_data::add_coins(int amount) {
 	saved = false;
 }
 
+
 int game_save_data::get_coins() const {
 	return coins;
 }
+
+void game_save_data::add_gem(int amount) {
+	gems += amount;
+	saved = false;
+}
+
+int game_save_data::get_gem() const {
+	return gems;
+}
+
 
 void game_save_data::give_machete() {
 	item_machete = true;
@@ -146,6 +158,11 @@ void game_state::update() {
 	coins_label.transform.position.x = ui_camera.width() / 2.0f - coins_label.transform.scale.width / 2.0f - textures.ui.coin.size.to<float>().x / 2.0f;
 	coins_label.transform.position.y = 32.0f;
 
+	/*gems_label.font = &fonts.hud;
+	gems_label.render(STRING(save_data.get_gem()));
+	gems_label.transform.position.x = ui_camera.width() / 2.0f - gems_label.transform.scale.width / 2.0f - textures.ui.gem.size.to<float>().x / 2.0f;*/
+
+
 	debug.set(&fonts.debug, STRING(
 		"Delta " << ne::delta() << 
 		"\nFPS: " << ne::current_fps()
@@ -173,12 +190,15 @@ void game_state::draw() {
 	view.position.xy = ui_camera.xy();
 	view.scale.xy = ui_camera.size();
 	coins_label.draw();
+	/*gems_label.draw();*/
 	// TODO: Clean
 	{
 		textures.ui.coin.bind();
 		ne::transform3f t;
 		t.position = coins_label.transform.position;
 		t.scale.xy = textures.ui.coin.size.to<float>();
+
+
 		t.position.x -= t.scale.width;
 		ne::shader::set_transform(&t);
 		still_quad().bind();
