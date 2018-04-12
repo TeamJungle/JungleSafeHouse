@@ -8,6 +8,7 @@
 #include "spikes_object.hpp"
 #include "npc_object.hpp"
 #include "vine_object.hpp"
+#include "world.hpp"
 
 void game_object_definitions::initialize() {
 	meta.insert(meta.begin(), TOTAL_OBJECT_TYPES, {});

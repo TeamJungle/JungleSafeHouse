@@ -67,6 +67,8 @@ void texture_assets::initialize() {
 
 	load({ &blank, "blank.png" }, false);
 	load({ &nothing, "nothing.png" }, false);
+	
+	load({ &rain, "rain.png" });
 
 	group("objects/player");
 	load({ &objects.player.idle[left], "idle.png", 1, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
@@ -188,4 +190,5 @@ void audio_assets::initialize() {
 	for (int i = 0; i < 3; i++) {
 		load({ &vine[i], STRING("vine" << i << ".wav") });
 	}
+	load({ &rain, "rain.ogg" });
 }

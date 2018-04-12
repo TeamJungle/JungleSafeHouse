@@ -10,6 +10,38 @@
 #include <camera.hpp>
 #include <platform.hpp>
 
+void rain_particles::update(game_world* world) {
+	if (ne::current_frame() % 10 == 0) {
+		float x = ne::ortho_camera::bound()->x();
+		for (int i = 0; i < 40; i++) {
+			particles.push_back({ x + (float)i * 32.0f - 16.0f, 8.0f });
+			particles.push_back({ x + (float)i * 32.0f, 64.0f });
+			particles.push_back({ x + (float)i * 32.0f + 16.0f, 32.0f });
+		}
+	}
+	for (size_t i = 0; i < particles.size(); i++) {
+		particles[i].x -= 6.0f;
+		particles[i].y += 6.0f + ne::random_float(6.0f);
+		if (particles[i].y > 600.0f) {
+			particles.erase(particles.begin() + i);
+			i--;
+		}
+	}
+}
+
+void rain_particles::draw() {
+	ne::shader::set_color(1.0f);
+	textures.rain.bind();
+	still_quad().bind();
+	ne::transform3f transform;
+	transform.scale.xy = textures.rain.size.to<float>();
+	for (auto& i : particles) {
+		transform.position.xy = i;
+		ne::shader::set_transform(&transform);
+		still_quad().draw();
+	}
+}
+
 void point_light::bind(int index, game_world* world) {
 	if (index < 0 || index >= 20) {
 		return;
@@ -110,6 +142,7 @@ game_world::game_world() {
 	definitions.objects.meta->initialize();
 	shop.world = this;
 	init();
+	settings::play(&audio.rain, 0.4f, -1);
 }
 
 void game_world::init() {
@@ -181,6 +214,8 @@ void game_world::update() {
 		return true;
 	});
 
+	rain.update(this);
+
 	// Change world.
 	if (change_to_level_num >= 0) {
 #if _DEBUG
@@ -226,6 +261,9 @@ void game_world::draw(const ne::transform3f& view) {
 
 	// Objects.
 	draw_objects(view);
+
+	// Draw rain.
+	rain.draw();
 
 	// Foregrounds.
 	backgrounds.bottom.draw(view, &textures.bg.bg_bott);
