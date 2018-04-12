@@ -6,7 +6,10 @@
 #include <game_world.hpp>
 
 void door_object::update(ne::game_world* world, ne::game_world_chunk* chunk) {
-	is_near_player = world->first<player_object>()->collision_transform().collides_with(transform);
+	auto player = world->first<player_object>();
+	if (player) {
+		is_near_player = player->collision_transform().collides_with(transform);
+	}
 }
 
 void door_object::draw() {

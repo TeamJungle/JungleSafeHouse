@@ -2,6 +2,7 @@
 #include "assets.hpp"
 #include "game.hpp"
 #include "editor.hpp"
+#include "test.hpp"
 
  menu_state::menu_state() {
 	menu.font = &fonts.hud;
@@ -14,6 +15,11 @@
 	menu.add_button("Editor", [] {
 		ne::swap_state<editor_state>();
 	});
+#if _DEBUG
+	menu.add_button("Test", [] {
+		ne::swap_state<test_state>(0);
+	});
+#endif
 	menu.add_button("Quit", [] {
 		std::exit(ne::stop_engine(0));
 	});

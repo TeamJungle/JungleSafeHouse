@@ -28,8 +28,8 @@ void editor_state::change_world(int level_num) {
 	} else {
 		world.reset();
 		world.init();
-		world.level_num = level_num;
 	}
+	world.level_num = level_num;
 	drag = {};
 	selected = nullptr;
 	camera.transform.position.xy = 0.0f;
