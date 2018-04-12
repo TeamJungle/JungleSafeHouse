@@ -64,5 +64,5 @@ void door_object::read(ne::memory_buffer* buffer) {
 	is_open = (buffer->read_uint8() != 0);
 	leads_to_level_num = buffer->read_int32();
 	opening_cost = buffer->read_int32();
-	//opening_gem_cost = buffer->read_int32();
+	opening_gem_cost = buffer->read_int32();
 }

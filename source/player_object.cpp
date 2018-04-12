@@ -84,7 +84,7 @@ void player_object::update(ne::game_world* world, ne::game_world_chunk* chunk) {
 				door->is_open = true;
 				w->save_data->unlock_level(door->leads_to_level_num);
 				w->save_data->add_coins(-door->opening_cost);
-				w->save_data->add_gem(-door->opening_cost);
+				w->save_data->add_gem(-door->opening_gem_cost);
 				settings::play(&audio.door, 0.15f);
 				return false;
 			});
