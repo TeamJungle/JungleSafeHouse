@@ -101,7 +101,8 @@ void player_object::update(ne::game_world* world, ne::game_world_chunk* chunk) {
 					if (vine_sound > 2) {
 						vine_sound = 0;
 					}
-				});
+				}); 
+				last_chop_time = ne::ticks();
 			}
 		});
 	}
@@ -154,6 +155,15 @@ void player_object::draw() {
 		animation.fps = 18.0f;
 		state = 3;
 	}
+
+	int64 mu_since_chop = ne::ticks() - last_chop_time;
+	if (mu_since_chop < 10000 || (old_state == 4 && animation.frame < 5)) {
+		state = 4;
+		sprite = &textures.objects.player.cut[direction];
+		machete = nullptr;
+		animation.fps = 18.0f;
+	}
+
 	if (old_state != state) {
 		animation.frame = 0;
 		animation.sub_frame = 0.0f;
@@ -165,7 +175,7 @@ void player_object::draw() {
 	if (!save_data) {
 		return;
 	}
-	if (save_data->has_machete()) {
+	if (machete && save_data->has_machete()) {
 		machete->bind();
 		animation.draw(false);
 	}

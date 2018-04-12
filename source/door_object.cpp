@@ -56,7 +56,7 @@ void door_object::write(ne::memory_buffer* buffer) {
 	buffer->write_uint8((is_open ? 1 : 0));
 	buffer->write_int32(leads_to_level_num);
 	buffer->write_int32(opening_cost);
-	buffer->write_int32(opening_gem_cost);
+	//buffer->write_int32(opening_gem_cost);
 }
 
 void door_object::read(ne::memory_buffer* buffer) {
@@ -64,5 +64,5 @@ void door_object::read(ne::memory_buffer* buffer) {
 	is_open = (buffer->read_uint8() != 0);
 	leads_to_level_num = buffer->read_int32();
 	opening_cost = buffer->read_int32();
-	opening_gem_cost = buffer->read_int32();
+	//opening_gem_cost = buffer->read_int32();
 }
