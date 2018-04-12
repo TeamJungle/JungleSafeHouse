@@ -19,6 +19,7 @@ void game_save_data::write(ne::memory_buffer* buffer) {
 
 void game_save_data::read(ne::memory_buffer* buffer) {
 	coins = buffer->read_int32();
+	gems = buffer->read_int32();
 	item_machete = (buffer->read_uint8() != 0);
 	uint32 levels_done = buffer->read_uint32();
 	levels.clear();
@@ -76,7 +77,6 @@ void game_save_data::add_coins(int amount) {
 	saved = false;
 }
 
-
 int game_save_data::get_coins() const {
 	return coins;
 }
@@ -89,7 +89,6 @@ void game_save_data::add_gem(int amount) {
 int game_save_data::get_gem() const {
 	return gems;
 }
-
 
 void game_save_data::give_machete() {
 	item_machete = true;
@@ -164,8 +163,9 @@ void game_state::update() {
 
 
 	debug.set(&fonts.debug, STRING(
-		"Delta " << ne::delta() << 
-		"\nFPS: " << ne::current_fps()
+		"Delta " << ne::delta() <<
+		"\nFPS: " << ne::current_fps() <<
+		"\nRain particles: " << world.rain.particles.size()
 	));
 
 	if (autosave_timer.seconds() > 30 || save_data.must_be_saved()) {

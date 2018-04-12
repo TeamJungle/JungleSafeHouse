@@ -69,6 +69,8 @@ public:
 		ne::texture machete;
 	} ui;
 
+	ne::texture rain;
+
 	void initialize();
 
 };
@@ -106,6 +108,7 @@ public:
 	ne::sound tiger;
 	ne::sound door;
 	ne::sound vine[3];
+	ne::sound rain;
 
 	void initialize();
 

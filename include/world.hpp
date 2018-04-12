@@ -15,6 +15,16 @@ class game_save_data;
 
 class game_world;
 
+class rain_particles {
+public:
+
+	std::vector<ne::vector2f> particles;
+
+	void update(game_world* world);
+	void draw();
+
+};
+
 class point_light {
 public:
 
@@ -32,6 +42,8 @@ public:
 
 class game_world : public ne::game_world {
 public:
+
+	rain_particles rain;
 
 	float ground_y = 600.0f;
 	bool draw_collisions = false;
