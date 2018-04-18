@@ -116,8 +116,8 @@ void game_world::world_backgrounds::set_default() {
 	fog_front.zoom = 0.5f;
 	fog_front.top_offset.x = 100.0f;
 	fog_front.top_offset.y = 400.0f;
-	fog_front.speed = 1500.0f;
-	fog_front.x_vary = 16.0f;
+	fog_front.speed = 4500.0f;
+	fog_front.x_vary = 128.0f;
 	fog_front.timer.start();
 
 	top.zoom = 0.75f;
@@ -444,6 +444,10 @@ void game_world::after_load() {
 			x += 160.0f;
 		}
 	}
+	// Ensure we don't have objects that have floating pixels.
+	each<ne::game_object>([](auto object) {
+		object->transform.position.xy.ceil();
+	});
 }
 
 void game_world::reset() {
