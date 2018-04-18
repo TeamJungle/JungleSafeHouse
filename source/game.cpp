@@ -165,7 +165,7 @@ void game_state::update() {
 	debug.set(&fonts.debug, STRING(
 		"Delta " << ne::delta() <<
 		"\nFPS: " << ne::current_fps() <<
-		"\nRain particles: " << world.rain.particles.size()
+		"\nRain particles: " << world.rain.count()
 	));
 
 	if (autosave_timer.seconds() > 30 || save_data.must_be_saved()) {

@@ -333,6 +333,25 @@ void editor_state::update() {
 		}
 	}
 
+	// Rain triggers
+	if (ImGui::CollapsingHeader("Rain")) {
+		for (size_t i = 0; i < world.rain_triggers.size(); i++) {
+			auto& trigger = world.rain_triggers[i];
+			if (ImGui::Button(CSTRING("-##RemoveRainTrigger" << i))) {
+				world.rain_triggers.erase(world.rain_triggers.begin() + i);
+				i--;
+			}
+			ImGui::SameLine();
+			ImGui::Combo(CSTRING("##TriggerRainOrNot" << i), &trigger.second, "Stop\0Start");
+			ImGui::Text("at");
+			ImGui::SameLine();
+			ImGui::InputFloat(CSTRING("##RainTrigger" << i), &trigger.first);
+		}
+		if (ImGui::Button("+##AddRainTrigger")) {
+			world.rain_triggers.push_back({ {}, 1 });
+		}
+	}
+
 	// Tools
 	ImGui::Text("Tool");
 	const int old_tool = tool;

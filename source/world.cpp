@@ -10,11 +10,26 @@
 #include <camera.hpp>
 #include <platform.hpp>
 
+void rain_particles::start() {
+	is_raining = true;
+	settings::play(&audio.rain, 0.4f, -1);
+}
+
+void rain_particles::stop() {
+	is_raining = false;
+	particles.clear();
+	audio.rain.stop();
+}
+
+int rain_particles::count() const {
+	return (int)particles.size();
+}
+
 void rain_particles::update(game_world* world) {
-	if (ne::current_frame() % 10 == 0) {
+	if (is_raining && ne::current_frame() % 10 == 0) {
 		float x = ne::ortho_camera::bound()->x();
 		for (int i = 0; i < 40; i++) {
-			particles.push_back({ x + (float)i * 32.0f - 16.0f, 8.0f });
+			particles.push_back({ x + (float)i * 32.0f - 16.0f, 16.0f });
 			particles.push_back({ x + (float)i * 32.0f, 64.0f });
 			particles.push_back({ x + (float)i * 32.0f + 16.0f, 32.0f });
 		}
@@ -22,7 +37,7 @@ void rain_particles::update(game_world* world) {
 	for (size_t i = 0; i < particles.size(); i++) {
 		particles[i].x -= 6.0f;
 		particles[i].y += 6.0f + ne::random_float(6.0f);
-		if (particles[i].y > 600.0f) {
+		if (particles[i].y > 700.0f) {
 			particles.erase(particles.begin() + i);
 			i--;
 		}
@@ -30,7 +45,6 @@ void rain_particles::update(game_world* world) {
 }
 
 void rain_particles::draw() {
-	ne::shader::set_color(1.0f);
 	textures.rain.bind();
 	still_quad().bind();
 	ne::transform3f transform;
@@ -142,7 +156,6 @@ game_world::game_world() {
 	definitions.objects.meta->initialize();
 	shop.world = this;
 	init();
-	settings::play(&audio.rain, 0.4f, -1);
 }
 
 void game_world::init() {
@@ -154,6 +167,19 @@ void game_world::init() {
 void game_world::update() {
 	update_objects();
 	shop.update();
+
+	if (rain_triggers.size() > 0) {
+		auto trigger = rain_triggers.front();
+		auto player = first<player_object>();
+		if (player && trigger.first < player->transform.position.x) {
+			if (trigger.second) {
+				rain.start();
+			} else {
+				rain.stop();
+			}
+			rain_triggers.erase(rain_triggers.begin());
+		}
+	}
 
 	// Handle updates which may destroy objects.
 	each_if<player_object>([&](auto player) {
@@ -300,7 +326,7 @@ void game_world::draw(const ne::transform3f& view) {
 
 void game_world::write(ne::memory_buffer* buffer) {
 	buffer->write_float(ground_y);
-	buffer->write_int32(-4);
+	buffer->write_int32(-5);
 	buffer->write_int32(level_num);
 	buffer->write_uint8(backgrounds.background.is_visible ? 1 : 0);
 	buffer->write_uint8(backgrounds.trees.is_visible ? 1 : 0);
@@ -320,6 +346,12 @@ void game_world::write(ne::memory_buffer* buffer) {
 	}
 	buffer->write_float(base_light);
 	backgrounds.write(buffer);
+	// version 5
+	buffer->write_uint32(rain_triggers.size());
+	for (auto& i : rain_triggers) {
+		buffer->write_float(i.first);
+		buffer->write_uint8((uint8)i.second);
+	}
 }
 
 void game_world::read(ne::memory_buffer* buffer) {
@@ -360,6 +392,15 @@ void game_world::read(ne::memory_buffer* buffer) {
 	if (version > 2) {
 		backgrounds = {};
 		backgrounds.read(buffer);
+	}
+	if (version > 4) {
+		uint32 trigger_count = buffer->read_uint32();
+		NE_INFO(trigger_count);
+		for (uint32 i = 0; i < trigger_count; i++) {
+			float x = buffer->read_float();
+			uint8 type = (buffer->read_uint8() != 0);
+			rain_triggers.push_back({ x, type });
+		}
 	}
 }
 

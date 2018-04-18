@@ -15,13 +15,25 @@ class game_save_data;
 
 class game_world;
 
+#define WEATHER_STOP_RAIN  0
+#define WEATHER_START_RAIN 1
+#define WEATHER_LIGHTNING  2
+#define WEATHER_THUNDER    3
+
 class rain_particles {
 public:
 
-	std::vector<ne::vector2f> particles;
+	void start();
+	void stop();
+	int count() const;
 
 	void update(game_world* world);
 	void draw();
+
+private:
+
+	std::vector<ne::vector2f> particles;
+	bool is_raining = false;
 
 };
 
@@ -44,6 +56,7 @@ class game_world : public ne::game_world {
 public:
 
 	rain_particles rain;
+	std::vector<std::pair<float, int>> rain_triggers;
 
 	float ground_y = 600.0f;
 	bool draw_collisions = false;
