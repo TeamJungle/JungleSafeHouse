@@ -26,6 +26,7 @@ public:
 			ne::texture jump[2];
 			ne::texture slide[2];
 			ne::texture flip[2];
+			ne::texture cut[2];
 		} player, machete;
 		struct {
 			ne::texture idle[2];

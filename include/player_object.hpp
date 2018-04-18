@@ -22,6 +22,7 @@ private:
 	int down_hit = -1;
 	int interact_hit = -1;
 	int state = 0;
+	int64 last_chop_time = 0;
 
 	game_save_data* save_data = nullptr;
 	
