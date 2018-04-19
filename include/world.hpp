@@ -75,6 +75,7 @@ public:
 	rain_particles rain;
 	thunder_effect thunder;
 	std::vector<std::pair<float, int>> rain_triggers;
+	std::vector<std::pair<float, float>> brightness_triggers;
 
 	float ground_y = 600.0f;
 	bool draw_collisions = false;
@@ -83,6 +84,7 @@ public:
 	std::vector<point_light> lights;
 	int bound_lights = 0;
 	float base_light = 1.0f;
+	float base_light_goal = 1.0f;
 
 	struct world_backgrounds {
 		// Background:

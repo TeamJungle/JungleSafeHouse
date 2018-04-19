@@ -225,6 +225,19 @@ void game_world::update() {
 		}
 	}
 
+	if (brightness_triggers.size() > 0) {
+		auto trigger = brightness_triggers.front();
+		auto player = first<player_object>();
+		if (player && trigger.first < player->transform.position.x) {
+			base_light_goal = trigger.second;
+			brightness_triggers.erase(brightness_triggers.begin());
+		}
+	}
+
+	if (std::abs(base_light - base_light_goal) > 0.0001f) {
+		base_light += (base_light_goal - base_light) * 0.05f;
+	}
+
 	// Handle updates which may destroy objects.
 	each_if<player_object>([&](auto player) {
 		if (rain.is_raining() && ne::current_frame() % 120 == 0) {
@@ -379,7 +392,7 @@ void game_world::draw(const ne::transform3f& view) {
 
 void game_world::write(ne::memory_buffer* buffer) {
 	buffer->write_float(ground_y);
-	buffer->write_int32(-5);
+	buffer->write_int32(-6);
 	buffer->write_int32(level_num);
 	buffer->write_uint8(backgrounds.background.is_visible ? 1 : 0);
 	buffer->write_uint8(backgrounds.trees.is_visible ? 1 : 0);
@@ -404,6 +417,12 @@ void game_world::write(ne::memory_buffer* buffer) {
 	for (auto& i : rain_triggers) {
 		buffer->write_float(i.first);
 		buffer->write_uint8((uint8)i.second);
+	}
+	// version 6
+	buffer->write_uint32(brightness_triggers.size());
+	for (auto& i : brightness_triggers) {
+		buffer->write_float(i.first);
+		buffer->write_float(i.second);
 	}
 }
 
@@ -452,6 +471,14 @@ void game_world::read(ne::memory_buffer* buffer) {
 			float x = buffer->read_float();
 			uint8 type = (buffer->read_uint8() != 0);
 			rain_triggers.push_back({ x, type });
+		}
+	}
+	if (version > 5) {
+		uint32 trigger_count = buffer->read_uint32();
+		for (uint32 i = 0; i < trigger_count; i++) {
+			float x = buffer->read_float();
+			float brightness = buffer->read_float();
+			brightness_triggers.push_back({ x, brightness });
 		}
 	}
 }

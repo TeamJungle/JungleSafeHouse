@@ -352,6 +352,25 @@ void editor_state::update() {
 		}
 	}
 
+	// Brightness adjustment triggers
+	if (ImGui::CollapsingHeader("Brightness")) {
+		for (size_t i = 0; i < world.brightness_triggers.size(); i++) {
+			auto& trigger = world.brightness_triggers[i];
+			if (ImGui::Button(CSTRING("-##RemoveBrightnessTrigger" << i))) {
+				world.brightness_triggers.erase(world.brightness_triggers.begin() + i);
+				i--;
+			}
+			ImGui::SameLine();
+			ImGui::InputFloat(CSTRING("##TriggerBrightnessValue" << i), &trigger.second);
+			ImGui::Text("at");
+			ImGui::SameLine();
+			ImGui::InputFloat(CSTRING("##BrightnessTrigger" << i), &trigger.first);
+		}
+		if (ImGui::Button("+##AddBrightnessTrigger")) {
+			world.brightness_triggers.push_back({ {}, 1 });
+		}
+	}
+
 	// Tools
 	ImGui::Text("Tool");
 	const int old_tool = tool;
