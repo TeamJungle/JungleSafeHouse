@@ -81,8 +81,10 @@ void texture_assets::initialize() {
 	load({ &objects.player.slide[right], "slide.png", 11, TEXTURE_IS_ANIMATED });
 	load({ &objects.player.flip[left], "flip.png", 8, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
 	load({ &objects.player.flip[right], "flip.png", 8, TEXTURE_IS_ANIMATED });
-	load({ &objects.player.cut[left], "cut.png", 6, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
-	load({ &objects.player.cut[right], "cut.png", 6, TEXTURE_IS_ANIMATED });
+	load({ &objects.player.cut[left], "cut.png", 9, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
+	load({ &objects.player.cut[right], "cut.png", 9, TEXTURE_IS_ANIMATED });
+	load({ &objects.player.running_cut[left], "run_cut.png", 12, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
+	load({ &objects.player.running_cut[right], "run_cut.png", 12, TEXTURE_IS_ANIMATED });
 
 	group("objects/player/machete");
 	load({ &objects.machete.idle[left], "idle.png", 1, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
@@ -93,9 +95,14 @@ void texture_assets::initialize() {
 	load({ &objects.machete.jump[right], "jump.png", 11, TEXTURE_IS_ANIMATED });
 	load({ &objects.machete.slide[left], "slide.png", 11, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
 	load({ &objects.machete.slide[right], "slide.png", 11, TEXTURE_IS_ANIMATED });
+	load({ &objects.machete.cut[left], "cut.png", 9, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
+	load({ &objects.machete.cut[right], "cut.png", 9, TEXTURE_IS_ANIMATED });
+	load({ &objects.machete.running_cut[left], "run_cut.png", 12, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
+	load({ &objects.machete.running_cut[right], "run_cut.png", 12, TEXTURE_IS_ANIMATED });
 	// TODO: Flip animation for machete.
 	load({ &objects.machete.flip[left], "flip.png", 8, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
 	load({ &objects.machete.flip[right], "flip.png", 8, TEXTURE_IS_ANIMATED });
+
 
 	group("objects/chaser");
 	load({ &objects.chaser.idle[left], "idle.png", 1, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
