@@ -48,7 +48,7 @@ public:
 	float rotate_speed = 0.0f;
 	float rotate_distance = 0.0f;
 
-	void bind(int index, game_world* world);
+	bool bind(int index, game_world* world);
 
 };
 
@@ -63,6 +63,7 @@ public:
 	game_save_data* save_data = nullptr;
 	int level_num = -1;
 	std::vector<point_light> lights;
+	int bound_lights = 0;
 	float base_light = 1.0f;
 
 	struct world_backgrounds {

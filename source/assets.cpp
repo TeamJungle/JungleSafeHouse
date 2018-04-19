@@ -157,6 +157,7 @@ void texture_assets::initialize() {
 	load({ &ui.shop, "shop.png" });
 	load({ &ui.button, "button.png", 3 });
 	load({ &ui.coin, "coin.png" });
+	load({ &ui.gem, "gem.png" });
 	load({ &ui.machete, "machete.png" });
 
 	spawn_thread();

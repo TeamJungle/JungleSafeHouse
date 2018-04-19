@@ -36,8 +36,8 @@ public:
 	void add_coins(int amount);
 	int get_coins() const;
 
-	void add_gem(int amount);
-	int get_gem() const;
+	void add_gems(int amount);
+	int get_gems() const;
 
 	void give_machete();
 	bool has_machete() const;

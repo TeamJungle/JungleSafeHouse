@@ -15,7 +15,12 @@ public:
 
 	NE_OBJECT_TYPE(OBJECT_TYPE_VINE, "Vine", false);
 
+	vine_object();
+
 	bool flip_x = false;
 	float health = 1.0f;
+
+	int func = 0;
+	float rspeed = 0.0f;
 
 };
