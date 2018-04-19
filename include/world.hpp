@@ -26,6 +26,7 @@ public:
 	void start();
 	void stop();
 	int count() const;
+	bool is_raining() const;
 
 	void update(game_world* world);
 	void draw();
@@ -33,7 +34,7 @@ public:
 private:
 
 	std::vector<ne::vector2f> particles;
-	bool is_raining = false;
+	bool raining = false;
 
 };
 
@@ -52,10 +53,27 @@ public:
 
 };
 
+class thunder_effect {
+public:
+
+	void strike(const ne::vector2f& position);
+
+	void update(game_world* world);
+	void draw();
+
+private:
+
+	ne::timer last_strike;
+	bool thunder_played = false;
+	ne::transform3f transform;
+
+};
+
 class game_world : public ne::game_world {
 public:
 
 	rain_particles rain;
+	thunder_effect thunder;
 	std::vector<std::pair<float, int>> rain_triggers;
 
 	float ground_y = 600.0f;

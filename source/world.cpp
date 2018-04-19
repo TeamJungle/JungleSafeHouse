@@ -11,12 +11,12 @@
 #include <platform.hpp>
 
 void rain_particles::start() {
-	is_raining = true;
+	raining = true;
 	settings::play(&audio.rain, 0.3f, -1);
 }
 
 void rain_particles::stop() {
-	is_raining = false;
+	raining = false;
 	particles.clear();
 	audio.rain.stop();
 }
@@ -26,7 +26,7 @@ int rain_particles::count() const {
 }
 
 void rain_particles::update(game_world* world) {
-	if (is_raining && ne::current_frame() % 10 == 0) {
+	if (raining && ne::current_frame() % 10 == 0) {
 		float x = ne::ortho_camera::bound()->x();
 		for (int i = 0; i < 40; i++) {
 			particles.push_back({ x + (float)i * 32.0f - 16.0f, 16.0f });
@@ -56,6 +56,39 @@ void rain_particles::draw() {
 		still_quad().draw();
 	}
 	ne::shader::set_color(1.0f);
+}
+
+bool rain_particles::is_raining() const {
+	return raining;
+}
+
+void thunder_effect::strike(const ne::vector2f& position) {
+	last_strike.start();
+	thunder_played = false;
+	transform.position.xy = position;
+	transform.scale.xy = textures.lightning.size.to<float>() / 1.8f;
+	transform.scale.xy.ceil();
+}
+
+void thunder_effect::update(game_world* world) {
+	if (!last_strike.has_started || last_strike.milliseconds() < 250) {
+		return;
+	}
+	if (!thunder_played) {
+		thunder_played = true;
+		int sound = ne::random_int(0, 2);
+		settings::play(&audio.thunder[sound], 0.5f);
+	}
+}
+
+void thunder_effect::draw() {
+	if (!last_strike.has_started || last_strike.milliseconds() > 1250) {
+		return;
+	}
+	textures.lightning.bind();
+	ne::shader::set_transform(&transform);
+	still_quad().bind();
+	still_quad().draw();
 }
 
 bool point_light::bind(int index, game_world* world) {
@@ -194,6 +227,10 @@ void game_world::update() {
 
 	// Handle updates which may destroy objects.
 	each_if<player_object>([&](auto player) {
+		if (rain.is_raining() && ne::current_frame() % 120 == 0) {
+			float dir = (ne::random_chance(0.5f) ? 1.0f : -1.0f);
+			thunder.strike({ player->transform.position.x + ne::random_float(400.0f, 600.0f) * dir, 100.0f });
+		}
 		// Collect an item if colliding.
 		if (save_data) {
 			each_if<item_object>([&](auto item) {
@@ -252,6 +289,7 @@ void game_world::update() {
 	});
 
 	rain.update(this);
+	thunder.update(this);
 
 	// Change world.
 	if (change_to_level_num >= 0) {
@@ -302,8 +340,9 @@ void game_world::draw(const ne::transform3f& view) {
 	// Objects.
 	draw_objects(view);
 
-	// Draw rain.
+	// Draw effects.
 	rain.draw();
+	thunder.draw();
 
 	// Foregrounds.
 	backgrounds.bottom.draw(view, &textures.bg.bg_bott);

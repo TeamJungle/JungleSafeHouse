@@ -71,6 +71,7 @@ public:
 	} ui;
 
 	ne::texture rain;
+	ne::texture lightning;
 
 	void initialize();
 
@@ -110,6 +111,7 @@ public:
 	ne::sound door;
 	ne::sound vine[3];
 	ne::sound rain;
+	ne::sound thunder[3];
 
 	void initialize();
 
