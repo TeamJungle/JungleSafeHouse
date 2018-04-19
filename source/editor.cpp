@@ -446,7 +446,7 @@ void editor_state::update() {
 		ImGui::Separator();
 		ImGui::Text("Light: ");
 		ImGui::SameLine();
-		if (world.lights.size() >= 20) {
+		if (world.lights.size() >= 40) {
 			ImGui::Text("Cannot add light to this object. Limit reached.");
 		} else {
 			bool has_light = false;

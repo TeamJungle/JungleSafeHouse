@@ -17,7 +17,7 @@
 	});
 #if _DEBUG
 	menu.add_button("Test", [] {
-		ne::swap_state<test_state>(0);
+		ne::swap_state<test_state>(1);
 	});
 #endif
 	menu.add_button("Quit", [] {
