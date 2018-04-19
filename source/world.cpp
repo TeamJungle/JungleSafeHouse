@@ -92,7 +92,7 @@ void thunder_effect::draw() {
 }
 
 bool point_light::bind(int index, game_world* world) {
-	if (index < 0 || index >= 20) {
+	if (index < 0 || index >= 40) {
 		return false;
 	}
 	auto object = world->find_object<ne::game_object>(object_id);
@@ -225,6 +225,17 @@ void game_world::update() {
 		}
 	}
 
+	if (brightness_triggers.size() > 0) {
+		auto trigger = brightness_triggers.front();
+		auto player = first<player_object>();
+		if (player && trigger.first < player->transform.position.x) {
+			base_light_goal = trigger.second;
+			brightness_triggers.erase(brightness_triggers.begin());
+		}
+	}
+
+	base_light += (base_light_goal - base_light) * 0.05f;
+
 	// Handle updates which may destroy objects.
 	each_if<player_object>([&](auto player) {
 		if (rain.is_raining() && ne::current_frame() % 120 == 0) {
@@ -332,10 +343,18 @@ void game_world::draw(const ne::transform3f& view) {
 	}
 
 	// Backgrounds.
-	backgrounds.background.draw(view, &textures.bg.high_bright);
-	backgrounds.trees.draw(view, &textures.bg.bg_back);
-	backgrounds.fog_back.draw(view, &textures.bg.bg_fog);
-	backgrounds.mid.draw(view, &textures.bg.bg_mid);
+	backgrounds.background.draw(this, view, [&] {
+		switch (which_bg) {
+		case 0: return &textures.bg.normal_bright;
+		case 1: return &textures.bg.normal_dark;
+		case 2: return &textures.bg.high_dark;
+		case 3:
+		default: return &textures.bg.high_bright;
+		}
+	}());
+	backgrounds.trees.draw(this, view, &textures.bg.bg_back);
+	backgrounds.fog_back.draw(this, view, &textures.bg.bg_fog);
+	backgrounds.mid.draw(this, view, &textures.bg.bg_mid);
 
 	// Objects.
 	draw_objects(view);
@@ -345,10 +364,10 @@ void game_world::draw(const ne::transform3f& view) {
 	thunder.draw();
 
 	// Foregrounds.
-	backgrounds.bottom.draw(view, &textures.bg.bg_bott);
-	backgrounds.top_lines.draw(view, &textures.bg.bg_top_lines);
-	backgrounds.top.draw(view, &textures.bg.bg_top);
-	backgrounds.fog_front.draw(view, &textures.bg.bg_fog);
+	backgrounds.bottom.draw(this, view, &textures.bg.bg_bott);
+	backgrounds.top_lines.draw(this, view, &textures.bg.bg_top_lines);
+	backgrounds.top.draw(this, view, &textures.bg.bg_top);
+	backgrounds.fog_front.draw(this, view, &textures.bg.bg_fog);
 
 	// Shop.
 	shaders.basic.bind();
@@ -379,7 +398,7 @@ void game_world::draw(const ne::transform3f& view) {
 
 void game_world::write(ne::memory_buffer* buffer) {
 	buffer->write_float(ground_y);
-	buffer->write_int32(-5);
+	buffer->write_int32(-7);
 	buffer->write_int32(level_num);
 	buffer->write_uint8(backgrounds.background.is_visible ? 1 : 0);
 	buffer->write_uint8(backgrounds.trees.is_visible ? 1 : 0);
@@ -405,6 +424,14 @@ void game_world::write(ne::memory_buffer* buffer) {
 		buffer->write_float(i.first);
 		buffer->write_uint8((uint8)i.second);
 	}
+	// version 6
+	buffer->write_uint32(brightness_triggers.size());
+	for (auto& i : brightness_triggers) {
+		buffer->write_float(i.first);
+		buffer->write_float(i.second);
+	}
+	// version 7
+	buffer->write_int32(which_bg);
 }
 
 void game_world::read(ne::memory_buffer* buffer) {
@@ -448,12 +475,22 @@ void game_world::read(ne::memory_buffer* buffer) {
 	}
 	if (version > 4) {
 		uint32 trigger_count = buffer->read_uint32();
-		NE_INFO(trigger_count);
 		for (uint32 i = 0; i < trigger_count; i++) {
 			float x = buffer->read_float();
 			uint8 type = (buffer->read_uint8() != 0);
 			rain_triggers.push_back({ x, type });
 		}
+	}
+	if (version > 5) {
+		uint32 trigger_count = buffer->read_uint32();
+		for (uint32 i = 0; i < trigger_count; i++) {
+			float x = buffer->read_float();
+			float brightness = buffer->read_float();
+			brightness_triggers.push_back({ x, brightness });
+		}
+	}
+	if (version > 6) {
+		which_bg = buffer->read_int32();
 	}
 }
 

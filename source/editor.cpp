@@ -271,6 +271,9 @@ void editor_state::update() {
 		}
 		world.ground_y = (float)ground_y_int;
 		ImGui::Checkbox("Draw collisions", &world.draw_collisions);
+		ImGui::Text("Background");
+		ImGui::SameLine();
+		ImGui::Combo("WhichBackground", &world.which_bg, "Normal (Night)\0Normal (Day)\0High (Night)\0High (Day)\0");
 		ImGui::Text(CSTRING("Objects: " << world.object_count()));
 		ImGui::SameLine();
 		ImGui::Text(CSTRING("Chunks: " << world.chunks.size()));
@@ -349,6 +352,25 @@ void editor_state::update() {
 		}
 		if (ImGui::Button("+##AddRainTrigger")) {
 			world.rain_triggers.push_back({ {}, 1 });
+		}
+	}
+
+	// Brightness adjustment triggers
+	if (ImGui::CollapsingHeader("Brightness")) {
+		for (size_t i = 0; i < world.brightness_triggers.size(); i++) {
+			auto& trigger = world.brightness_triggers[i];
+			if (ImGui::Button(CSTRING("-##RemoveBrightnessTrigger" << i))) {
+				world.brightness_triggers.erase(world.brightness_triggers.begin() + i);
+				i--;
+			}
+			ImGui::SameLine();
+			ImGui::InputFloat(CSTRING("##TriggerBrightnessValue" << i), &trigger.second);
+			ImGui::Text("at");
+			ImGui::SameLine();
+			ImGui::InputFloat(CSTRING("##BrightnessTrigger" << i), &trigger.first);
+		}
+		if (ImGui::Button("+##AddBrightnessTrigger")) {
+			world.brightness_triggers.push_back({ {}, 1 });
 		}
 	}
 
@@ -446,7 +468,7 @@ void editor_state::update() {
 		ImGui::Separator();
 		ImGui::Text("Light: ");
 		ImGui::SameLine();
-		if (world.lights.size() >= 20) {
+		if (world.lights.size() >= 40) {
 			ImGui::Text("Cannot add light to this object. Limit reached.");
 		} else {
 			bool has_light = false;
