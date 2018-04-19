@@ -234,9 +234,7 @@ void game_world::update() {
 		}
 	}
 
-	if (std::abs(base_light - base_light_goal) > 0.0001f) {
-		base_light += (base_light_goal - base_light) * 0.05f;
-	}
+	base_light += (base_light_goal - base_light) * 0.05f;
 
 	// Handle updates which may destroy objects.
 	each_if<player_object>([&](auto player) {
