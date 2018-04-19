@@ -332,10 +332,10 @@ void game_world::draw(const ne::transform3f& view) {
 	}
 
 	// Backgrounds.
-	backgrounds.background.draw(view, &textures.bg.high_bright);
-	backgrounds.trees.draw(view, &textures.bg.bg_back);
-	backgrounds.fog_back.draw(view, &textures.bg.bg_fog);
-	backgrounds.mid.draw(view, &textures.bg.bg_mid);
+	backgrounds.background.draw(this, view, &textures.bg.high_bright);
+	backgrounds.trees.draw(this, view, &textures.bg.bg_back);
+	backgrounds.fog_back.draw(this, view, &textures.bg.bg_fog);
+	backgrounds.mid.draw(this, view, &textures.bg.bg_mid);
 
 	// Objects.
 	draw_objects(view);
@@ -345,10 +345,10 @@ void game_world::draw(const ne::transform3f& view) {
 	thunder.draw();
 
 	// Foregrounds.
-	backgrounds.bottom.draw(view, &textures.bg.bg_bott);
-	backgrounds.top_lines.draw(view, &textures.bg.bg_top_lines);
-	backgrounds.top.draw(view, &textures.bg.bg_top);
-	backgrounds.fog_front.draw(view, &textures.bg.bg_fog);
+	backgrounds.bottom.draw(this, view, &textures.bg.bg_bott);
+	backgrounds.top_lines.draw(this, view, &textures.bg.bg_top_lines);
+	backgrounds.top.draw(this, view, &textures.bg.bg_top);
+	backgrounds.fog_front.draw(this, view, &textures.bg.bg_fog);
 
 	// Shop.
 	shaders.basic.bind();
@@ -448,7 +448,6 @@ void game_world::read(ne::memory_buffer* buffer) {
 	}
 	if (version > 4) {
 		uint32 trigger_count = buffer->read_uint32();
-		NE_INFO(trigger_count);
 		for (uint32 i = 0; i < trigger_count; i++) {
 			float x = buffer->read_float();
 			uint8 type = (buffer->read_uint8() != 0);

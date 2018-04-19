@@ -1,7 +1,7 @@
 #include "game_world_background.hpp"
 #include "game.hpp"
 
-void game_world_background::draw(const ne::transform3f& view, ne::texture* texture) const {
+void game_world_background::draw(game_world* world, const ne::transform3f& view, ne::texture* texture) const {
 	if (!is_visible) {
 		return;
 	}
@@ -23,7 +23,7 @@ void game_world_background::draw(const ne::transform3f& view, ne::texture* textu
 		transform.position.x = x + top_offset.x;
 		transform.position.y = top_offset.y;
 		if (bottom_offset.y > 1.0f) {
-			transform.position.y += view.scale.height - bottom_offset.y;
+			transform.position.y = world->ground_y - bottom_offset.y;
 		}
 		transform.position.xy.ceil();
 		ne::shader::set_transform(&transform);

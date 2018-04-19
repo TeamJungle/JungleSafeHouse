@@ -220,6 +220,9 @@ void game_state::draw() {
 }
 
 void game_state::save() {
+	if (!std::experimental::filesystem::is_directory("saves")) {
+		std::experimental::filesystem::create_directory("saves");
+	}
 	ne::memory_buffer buffer;
 	save_data.write(&buffer);
 	ne::write_file("saves/default.save", buffer.begin, buffer.write_index());

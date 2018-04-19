@@ -5,6 +5,8 @@
 #include <timer.hpp>
 #include <memory.hpp>
 
+class game_world;
+
 class game_world_background {
 public:
 
@@ -26,7 +28,7 @@ public:
 
 	std::string name;
 
-	void draw(const ne::transform3f& view, ne::texture* texture) const;
+	void draw(game_world* world, const ne::transform3f& view, ne::texture* texture) const;
 
 	void write(ne::memory_buffer* buffer);
 	void read(ne::memory_buffer* buffer);
