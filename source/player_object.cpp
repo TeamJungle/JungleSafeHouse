@@ -157,10 +157,15 @@ void player_object::draw() {
 	}
 
 	int64 mu_since_chop = ne::ticks() - last_chop_time;
-	if (mu_since_chop < 10000 || (old_state == 4 && animation.frame < 8)) {
+	if (mu_since_chop < 10000 || (old_state == 4 && animation.frame < (move->is_running ? 11 : 8))) {
 		state = 4;
-		sprite = &textures.objects.player.cut[direction];
-		machete = &textures.objects.machete.cut[direction];
+		if (move->is_running) {
+			sprite = &textures.objects.player.running_cut[direction];
+			machete = &textures.objects.machete.running_cut[direction];
+		} else {
+			sprite = &textures.objects.player.cut[direction];
+			machete = &textures.objects.machete.cut[direction];
+		}
 		animation.fps = 25.0f;
 	}
 
