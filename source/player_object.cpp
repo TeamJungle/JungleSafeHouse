@@ -63,7 +63,7 @@ void player_object::update(ne::game_world* world, ne::game_world_chunk* chunk) {
 				}
 				return false;
 			});
-			if (!no_action || w->shop.is_open) {
+			if (!no_action) {
 				return;
 			}
 			no_action = w->each_if<door_object>([&](auto door) {
@@ -78,13 +78,13 @@ void player_object::update(ne::game_world* world, ne::game_world_chunk* chunk) {
 				if (door->opening_cost > w->save_data->get_coins()) {
 					return false;
 				}
-				if (door->opening_gem_cost > w->save_data->get_gem()) {
+				if (door->opening_gem_cost > w->save_data->get_gems()) {
 					return false;
 				}
 				door->is_open = true;
 				w->save_data->unlock_level(door->leads_to_level_num);
 				w->save_data->add_coins(-door->opening_cost);
-				w->save_data->add_gem(-door->opening_gem_cost);
+				w->save_data->add_gems(-door->opening_gem_cost);
 				settings::play(&audio.door, 0.15f);
 				return false;
 			});

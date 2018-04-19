@@ -11,12 +11,12 @@
 #include <platform.hpp>
 
 void rain_particles::start() {
-	is_raining = true;
-	settings::play(&audio.rain, 0.4f, -1);
+	raining = true;
+	settings::play(&audio.rain, 0.3f, -1);
 }
 
 void rain_particles::stop() {
-	is_raining = false;
+	raining = false;
 	particles.clear();
 	audio.rain.stop();
 }
@@ -26,7 +26,7 @@ int rain_particles::count() const {
 }
 
 void rain_particles::update(game_world* world) {
-	if (is_raining && ne::current_frame() % 10 == 0) {
+	if (raining && ne::current_frame() % 10 == 0) {
 		float x = ne::ortho_camera::bound()->x();
 		for (int i = 0; i < 40; i++) {
 			particles.push_back({ x + (float)i * 32.0f - 16.0f, 16.0f });
@@ -45,6 +45,7 @@ void rain_particles::update(game_world* world) {
 }
 
 void rain_particles::draw() {
+	ne::shader::set_color(1.0f, 1.0f, 1.0f, 0.75f);
 	textures.rain.bind();
 	still_quad().bind();
 	ne::transform3f transform;
@@ -54,23 +55,65 @@ void rain_particles::draw() {
 		ne::shader::set_transform(&transform);
 		still_quad().draw();
 	}
+	ne::shader::set_color(1.0f);
 }
 
-void point_light::bind(int index, game_world* world) {
-	if (index < 0 || index >= 20) {
+bool rain_particles::is_raining() const {
+	return raining;
+}
+
+void thunder_effect::strike(const ne::vector2f& position) {
+	last_strike.start();
+	thunder_played = false;
+	transform.position.xy = position;
+	transform.scale.xy = textures.lightning.size.to<float>() / 1.8f;
+	transform.scale.xy.ceil();
+}
+
+void thunder_effect::update(game_world* world) {
+	if (!last_strike.has_started || last_strike.milliseconds() < 250) {
 		return;
+	}
+	if (!thunder_played) {
+		thunder_played = true;
+		int sound = ne::random_int(0, 2);
+		settings::play(&audio.thunder[sound], 0.5f);
+	}
+}
+
+void thunder_effect::draw() {
+	if (!last_strike.has_started || last_strike.milliseconds() > 1250) {
+		return;
+	}
+	textures.lightning.bind();
+	ne::shader::set_transform(&transform);
+	still_quad().bind();
+	still_quad().draw();
+}
+
+bool point_light::bind(int index, game_world* world) {
+	if (index < 0 || index >= 20) {
+		return false;
 	}
 	auto object = world->find_object<ne::game_object>(object_id);
 	if (!object) {
-		return;
+		return false;
 	}
+	ne::ortho_camera* camera = ne::ortho_camera::bound();
+
 	ne::vector2f position = object->transform.position.xy + object->transform.scale.xy / 2.0f;
 	position.x += std::cos(rotate_current) * rotate_distance;
 	position.y += std::sin(rotate_current) * rotate_distance;
 	rotate_current += rotate_speed;
 
+	if (camera->x() > position.x + 150.0f) {
+		return false;
+	}
+	if (camera->x() + camera->width() < position.x - 150.0f) {
+		return false;
+	}
+
 	std::string index_str = std::to_string(index);
-	ne::ortho_camera* camera = ne::ortho_camera::bound();
 	glm::mat4 view = ortho_view(camera->transform.position, camera->transform.rotation.z, camera->zoom);
 	glm::vec4 view_position = view * glm::vec4(position.x, position.y, 1.0f, 1.0f);
 	int light_position_handle = ne::shader::get_variable_handle("uni_LightPosition[" + index_str + "]");
@@ -79,6 +122,7 @@ void point_light::bind(int index, game_world* world) {
 	ne::shader::set_variable(light_position_handle, ne::vector2f{ view_position.x, view_position.y });
 	ne::shader::set_variable(light_color_handle, color);
 	ne::shader::set_variable(light_intensity_handle, intensity);
+	return true;
 }
 
 void game_world::world_backgrounds::set_default() {
@@ -116,8 +160,8 @@ void game_world::world_backgrounds::set_default() {
 	fog_front.zoom = 0.5f;
 	fog_front.top_offset.x = 100.0f;
 	fog_front.top_offset.y = 400.0f;
-	fog_front.speed = 1500.0f;
-	fog_front.x_vary = 16.0f;
+	fog_front.speed = 4500.0f;
+	fog_front.x_vary = 128.0f;
 	fog_front.timer.start();
 
 	top.zoom = 0.75f;
@@ -183,6 +227,10 @@ void game_world::update() {
 
 	// Handle updates which may destroy objects.
 	each_if<player_object>([&](auto player) {
+		if (rain.is_raining() && ne::current_frame() % 120 == 0) {
+			float dir = (ne::random_chance(0.5f) ? 1.0f : -1.0f);
+			thunder.strike({ player->transform.position.x + ne::random_float(400.0f, 600.0f) * dir, 100.0f });
+		}
 		// Collect an item if colliding.
 		if (save_data) {
 			each_if<item_object>([&](auto item) {
@@ -190,7 +238,7 @@ void game_world::update() {
 					return true;
 				}
 				if (item->subtype == ITEM_GEM) {
-					save_data->add_gem(1);
+					save_data->add_gems(1);
 				} else {
 					save_data->add_coins(5);
 				}
@@ -241,6 +289,7 @@ void game_world::update() {
 	});
 
 	rain.update(this);
+	thunder.update(this);
 
 	// Change world.
 	if (change_to_level_num >= 0) {
@@ -265,15 +314,18 @@ void game_world::draw(const ne::transform3f& view) {
 		shaders.light.bind();
 		ne::shader::set_color(1.0f);
 		ne::ortho_camera::bound()->bind();
+		bound_lights = 0;
 		for (size_t i = 0; i < lights.size(); i++) {
 			if (!find_object<ne::game_object>(lights[i].object_id)) {
 				lights.erase(lights.begin() + i);
 				i--;
 				continue;
 			}
-			lights[i].bind(i, this);
+			if (lights[i].bind(bound_lights, this)) {
+				bound_lights++;
+			}
 		}
-		ne::shader::set_variable(ne::shader::get_variable_handle("uni_LightCount"), (int)lights.size());
+		ne::shader::set_variable(ne::shader::get_variable_handle("uni_LightCount"), bound_lights);
 		ne::shader::set_variable(ne::shader::get_variable_handle("uni_BaseLight"), base_light);
 	} else {
 		shaders.basic.bind();
@@ -288,8 +340,9 @@ void game_world::draw(const ne::transform3f& view) {
 	// Objects.
 	draw_objects(view);
 
-	// Draw rain.
+	// Draw effects.
 	rain.draw();
+	thunder.draw();
 
 	// Foregrounds.
 	backgrounds.bottom.draw(view, &textures.bg.bg_bott);
@@ -444,6 +497,10 @@ void game_world::after_load() {
 			x += 160.0f;
 		}
 	}
+	// Ensure we don't have objects that have floating pixels.
+	each<ne::game_object>([](auto object) {
+		object->transform.position.xy.ceil();
+	});
 }
 
 void game_world::reset() {

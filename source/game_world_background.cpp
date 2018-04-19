@@ -25,6 +25,7 @@ void game_world_background::draw(const ne::transform3f& view, ne::texture* textu
 		if (bottom_offset.y > 1.0f) {
 			transform.position.y += view.scale.height - bottom_offset.y;
 		}
+		transform.position.xy.ceil();
 		ne::shader::set_transform(&transform);
 		still_quad().draw();
 	}

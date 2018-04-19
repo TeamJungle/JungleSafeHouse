@@ -81,12 +81,12 @@ int game_save_data::get_coins() const {
 	return coins;
 }
 
-void game_save_data::add_gem(int amount) {
+void game_save_data::add_gems(int amount) {
 	gems += amount;
 	saved = false;
 }
 
-int game_save_data::get_gem() const {
+int game_save_data::get_gems() const {
 	return gems;
 }
 
@@ -157,15 +157,16 @@ void game_state::update() {
 	coins_label.transform.position.x = ui_camera.width() / 2.0f - coins_label.transform.scale.width / 2.0f - textures.ui.coin.size.to<float>().x / 2.0f;
 	coins_label.transform.position.y = 32.0f;
 
-	/*gems_label.font = &fonts.hud;
-	gems_label.render(STRING(save_data.get_gem()));
-	gems_label.transform.position.x = ui_camera.width() / 2.0f - gems_label.transform.scale.width / 2.0f - textures.ui.gem.size.to<float>().x / 2.0f;*/
-
+	gems_label.font = &fonts.hud;
+	gems_label.render(STRING(save_data.get_gems()));
+	gems_label.transform.position.x = ui_camera.width() / 2.0f - gems_label.transform.scale.width / 2.0f - textures.ui.gem.size.to<float>().x / 2.0f;
+	gems_label.transform.position.y = 96.0f;
 
 	debug.set(&fonts.debug, STRING(
 		"Delta " << ne::delta() <<
 		"\nFPS: " << ne::current_fps() <<
-		"\nRain particles: " << world.rain.count()
+		"\nRain particles: " << world.rain.count() <<
+		"\nLights: " << world.bound_lights
 	));
 
 	if (autosave_timer.seconds() > 30 || save_data.must_be_saved()) {
@@ -190,18 +191,22 @@ void game_state::draw() {
 	view.position.xy = ui_camera.xy();
 	view.scale.xy = ui_camera.size();
 	coins_label.draw();
-	/*gems_label.draw();*/
+	gems_label.draw();
 	// TODO: Clean
 	{
+		still_quad().bind();
 		textures.ui.coin.bind();
 		ne::transform3f t;
-		t.position = coins_label.transform.position;
 		t.scale.xy = textures.ui.coin.size.to<float>();
-
-
+		t.position = coins_label.transform.position;
 		t.position.x -= t.scale.width;
 		ne::shader::set_transform(&t);
-		still_quad().bind();
+		still_quad().draw();
+		textures.ui.gem.bind();
+		t.scale.xy = textures.ui.gem.size.to<float>();
+		t.position = gems_label.transform.position;
+		t.position.x -= t.scale.width;
+		ne::shader::set_transform(&t);
 		still_quad().draw();
 	}
 	pause.draw(ui_camera.size());

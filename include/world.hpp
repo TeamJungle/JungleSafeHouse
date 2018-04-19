@@ -26,6 +26,7 @@ public:
 	void start();
 	void stop();
 	int count() const;
+	bool is_raining() const;
 
 	void update(game_world* world);
 	void draw();
@@ -33,7 +34,7 @@ public:
 private:
 
 	std::vector<ne::vector2f> particles;
-	bool is_raining = false;
+	bool raining = false;
 
 };
 
@@ -48,7 +49,23 @@ public:
 	float rotate_speed = 0.0f;
 	float rotate_distance = 0.0f;
 
-	void bind(int index, game_world* world);
+	bool bind(int index, game_world* world);
+
+};
+
+class thunder_effect {
+public:
+
+	void strike(const ne::vector2f& position);
+
+	void update(game_world* world);
+	void draw();
+
+private:
+
+	ne::timer last_strike;
+	bool thunder_played = false;
+	ne::transform3f transform;
 
 };
 
@@ -56,6 +73,7 @@ class game_world : public ne::game_world {
 public:
 
 	rain_particles rain;
+	thunder_effect thunder;
 	std::vector<std::pair<float, int>> rain_triggers;
 
 	float ground_y = 600.0f;
@@ -63,6 +81,7 @@ public:
 	game_save_data* save_data = nullptr;
 	int level_num = -1;
 	std::vector<point_light> lights;
+	int bound_lights = 0;
 	float base_light = 1.0f;
 
 	struct world_backgrounds {
