@@ -92,7 +92,7 @@ void thunder_effect::draw() {
 }
 
 bool point_light::bind(int index, game_world* world) {
-	if (index < 0 || index >= 20) {
+	if (index < 0 || index >= 40) {
 		return false;
 	}
 	auto object = world->find_object<ne::game_object>(object_id);

@@ -2,9 +2,9 @@
 
 uniform sampler2D uni_Texture;
 
-uniform vec2 uni_LightPosition[20];
-uniform vec3 uni_LightColor[20];
-uniform float uni_LightIntensity[20];
+uniform vec2 uni_LightPosition[40];
+uniform vec3 uni_LightColor[40];
+uniform float uni_LightIntensity[40];
 uniform int uni_LightCount;
 uniform float uni_BaseLight;
 
