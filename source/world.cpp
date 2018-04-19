@@ -343,7 +343,15 @@ void game_world::draw(const ne::transform3f& view) {
 	}
 
 	// Backgrounds.
-	backgrounds.background.draw(this, view, &textures.bg.high_bright);
+	backgrounds.background.draw(this, view, [&] {
+		switch (which_bg) {
+		case 0: return &textures.bg.normal_bright;
+		case 1: return &textures.bg.normal_dark;
+		case 2: return &textures.bg.high_dark;
+		case 3:
+		default: return &textures.bg.high_bright;
+		}
+	}());
 	backgrounds.trees.draw(this, view, &textures.bg.bg_back);
 	backgrounds.fog_back.draw(this, view, &textures.bg.bg_fog);
 	backgrounds.mid.draw(this, view, &textures.bg.bg_mid);
@@ -390,7 +398,7 @@ void game_world::draw(const ne::transform3f& view) {
 
 void game_world::write(ne::memory_buffer* buffer) {
 	buffer->write_float(ground_y);
-	buffer->write_int32(-6);
+	buffer->write_int32(-7);
 	buffer->write_int32(level_num);
 	buffer->write_uint8(backgrounds.background.is_visible ? 1 : 0);
 	buffer->write_uint8(backgrounds.trees.is_visible ? 1 : 0);
@@ -422,6 +430,8 @@ void game_world::write(ne::memory_buffer* buffer) {
 		buffer->write_float(i.first);
 		buffer->write_float(i.second);
 	}
+	// version 7
+	buffer->write_int32(which_bg);
 }
 
 void game_world::read(ne::memory_buffer* buffer) {
@@ -478,6 +488,9 @@ void game_world::read(ne::memory_buffer* buffer) {
 			float brightness = buffer->read_float();
 			brightness_triggers.push_back({ x, brightness });
 		}
+	}
+	if (version > 6) {
+		which_bg = buffer->read_int32();
 	}
 }
 

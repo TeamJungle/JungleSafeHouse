@@ -271,6 +271,9 @@ void editor_state::update() {
 		}
 		world.ground_y = (float)ground_y_int;
 		ImGui::Checkbox("Draw collisions", &world.draw_collisions);
+		ImGui::Text("Background");
+		ImGui::SameLine();
+		ImGui::Combo("WhichBackground", &world.which_bg, "Normal (Night)\0Normal (Day)\0High (Night)\0High (Day)\0");
 		ImGui::Text(CSTRING("Objects: " << world.object_count()));
 		ImGui::SameLine();
 		ImGui::Text(CSTRING("Chunks: " << world.chunks.size()));

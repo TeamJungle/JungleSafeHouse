@@ -85,6 +85,7 @@ public:
 	int bound_lights = 0;
 	float base_light = 1.0f;
 	float base_light_goal = 1.0f;
+	int which_bg = 3;
 
 	struct world_backgrounds {
 		// Background:
