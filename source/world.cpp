@@ -234,7 +234,7 @@ void game_world::update() {
 		}
 	}
 
-	base_light += (base_light_goal - base_light) * 0.05f;
+	base_light += (base_light_goal - base_light) * 0.04f;
 
 	// Handle updates which may destroy objects.
 	each_if<player_object>([&](auto player) {
@@ -458,6 +458,7 @@ void game_world::read(ne::memory_buffer* buffer) {
 			lights.push_back({ intensity, color, object_id, 0.0f, rotate_speed, rotate_distance });
 		}
 		base_light = buffer->read_float();
+		base_light_goal = base_light;
 	}
 	if (version > 2) {
 		backgrounds = {};
