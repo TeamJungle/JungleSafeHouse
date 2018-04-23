@@ -42,6 +42,9 @@ public:
 	void give_machete();
 	bool has_machete() const;
 
+	void give_boots();
+	bool has_boots() const;
+
 private:
 
 	bool saved = true;
@@ -50,6 +53,7 @@ private:
 	int32 gems = 0;
 	std::unordered_map<int, level_complete_data> levels;
 	bool item_machete = false;
+	bool item_boots = false;
 
 };
 
@@ -59,6 +63,7 @@ public:
 	game_save_data save_data;
 	ne::font_text coins_label;
 	ne::font_text gems_label;
+	ne::font_text info_label;
 
 	pause_menu pause;
 

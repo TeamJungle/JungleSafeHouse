@@ -34,6 +34,13 @@ void player_object::update(ne::game_world* world, ne::game_world_chunk* chunk) {
 	game_world* w = (game_world*)world;
 	save_data = w->save_data;
 	auto move = component<game_object_move_component>();
+	if (save_data) {
+		if (save_data->has_boots()) {
+			move->max_double_jumps = 1;
+		} else {
+			move->max_double_jumps = 0;
+		}
+	}
 	if (up_hit == -1) {
 		up_hit = input().up_hit.listen([this, w] {
 			if (!w->shop.is_open) {
@@ -130,17 +137,20 @@ void player_object::draw() {
 	auto move = component<game_object_move_component>();
 	ne::texture* sprite = &textures.objects.player.idle[direction];
 	ne::texture* machete = &textures.objects.machete.idle[direction];
+	ne::texture* boots = &textures.objects.boots.idle[direction];
 	int old_state = state;
 	state = 0;
 	if (move->is_running) {
 		sprite = &textures.objects.player.run[direction];
 		machete = &textures.objects.machete.run[direction];
+		boots = &textures.objects.boots.run[direction];
 		animation.fps = 30.0f;
 		state = 1;
 	}
 	if (move->is_sliding) {
 		sprite = &textures.objects.player.slide[direction];
 		machete = &textures.objects.machete.slide[direction];
+		boots = &textures.objects.boots.slide[direction];
 		animation.fps = 14.0f;
 		state = 2;
 		// A bit hackish solution to prevent the animation from looping.
@@ -152,6 +162,7 @@ void player_object::draw() {
 	if (move->is_jumping()) {
 		sprite = &textures.objects.player.jump[direction];
 		machete = &textures.objects.machete.jump[direction];
+		boots = &textures.objects.boots.jump[direction];
 		animation.fps = 18.0f;
 		state = 3;
 	}
@@ -162,9 +173,11 @@ void player_object::draw() {
 		if (move->is_running) {
 			sprite = &textures.objects.player.running_cut[direction];
 			machete = &textures.objects.machete.running_cut[direction];
+			boots = &textures.objects.boots.running_cut[direction];
 		} else {
 			sprite = &textures.objects.player.cut[direction];
 			machete = &textures.objects.machete.cut[direction];
+			boots = &textures.objects.boots.cut[direction];
 		}
 		animation.fps = 25.0f;
 	}
@@ -182,6 +195,10 @@ void player_object::draw() {
 	}
 	if (machete && save_data->has_machete()) {
 		machete->bind();
+		animation.draw(false);
+	}
+	if (boots && save_data->has_boots()) {
+		boots->bind();
 		animation.draw(false);
 	}
 }

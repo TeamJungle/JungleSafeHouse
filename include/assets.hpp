@@ -28,7 +28,7 @@ public:
 			ne::texture flip[2];
 			ne::texture cut[2];
 			ne::texture running_cut[2];
-		} player, machete;
+		} player, machete, boots;
 		struct {
 			ne::texture idle[2];
 			ne::texture run[2];

@@ -253,6 +253,12 @@ void game_world::update() {
 				} else {
 					save_data->add_coins(5);
 				}
+
+				if (item->subtype == ITEM_BOOTS) {
+					save_data->give_boots();
+				} else if (item->subtype == ITEM_MACHETE) {
+					save_data->give_machete();
+				}
 				
 				// TODO: Clean.
 				{
@@ -547,4 +553,5 @@ void game_world::reset() {
 	level_num = -1;
 	base_light = 1.0f;
 	lights.clear();
+	rain.stop();
 }

@@ -9,6 +9,7 @@
 void game_save_data::write(ne::memory_buffer* buffer) {
 	buffer->write_int32(coins);
 	buffer->write_int32(gems);
+	buffer->write_uint8(item_boots ? 1 : 0);
 	buffer->write_uint8(item_machete ? 1 : 0);
 	buffer->write_uint32(levels.size());
 	for (auto& i : levels) {
@@ -20,6 +21,7 @@ void game_save_data::write(ne::memory_buffer* buffer) {
 void game_save_data::read(ne::memory_buffer* buffer) {
 	coins = buffer->read_int32();
 	gems = buffer->read_int32();
+	item_boots = (buffer->read_uint8() != 0);
 	item_machete = (buffer->read_uint8() != 0);
 	uint32 levels_done = buffer->read_uint32();
 	levels.clear();
@@ -93,11 +95,19 @@ int game_save_data::get_gems() const {
 void game_save_data::give_machete() {
 	item_machete = true;
 	saved = false;
-	must_save = true;
 }
 
 bool game_save_data::has_machete() const {
 	return item_machete;
+}
+
+void game_save_data::give_boots() {
+	item_boots = true;
+	saved = false;
+}
+
+bool game_save_data::has_boots() const {
+	return item_boots;
 }
 
 game_state::game_state() {
@@ -162,12 +172,14 @@ void game_state::update() {
 	gems_label.transform.position.x = ui_camera.width() / 2.0f - gems_label.transform.scale.width / 2.0f - textures.ui.gem.size.to<float>().x / 2.0f;
 	gems_label.transform.position.y = 96.0f;
 
+#if _DEBUG
 	debug.set(&fonts.debug, STRING(
 		"Delta " << ne::delta() <<
 		"\nFPS: " << ne::current_fps() <<
 		"\nRain particles: " << world.rain.count() <<
 		"\nLights: " << world.bound_lights
 	));
+#endif
 
 	if (autosave_timer.seconds() > 30 || save_data.must_be_saved()) {
 		save();
@@ -212,7 +224,31 @@ void game_state::draw() {
 	pause.draw(ui_camera.size());
 	ne::shader::set_color(1.0f);
 	still_quad().bind();
+#if _DEBUG
 	debug.draw(view);
+#endif
+
+	// Draw tutorial instructions:
+	if (world.level_num == 1) {
+		auto player = world.first<player_object>();
+		if (player) {
+			info_label.font = &fonts.hud;
+			if (player->transform.position.x > 3800.0f) {
+				info_label.render("Press 'Space' twice to open the door!");
+			} else if (player->transform.position.x > 3100.0f) { // 'space' to chop vines
+				info_label.render("Press 'Space' to chop vines!");
+			} else if (player->transform.position.x > 2400.0f) { // 'w' mid-air to double jump
+				info_label.render("        Grab the winged boots!\nPress 'W' mid-air to double jump!");
+			} else if (player->transform.position.x > 1500.0f) { // 's' to slide
+				info_label.render("Press 'S' to slide!");
+			} else if (player->transform.position.x > 900.0f) { // 'w' to jump
+				info_label.render("Press 'W' to jump!");
+			}
+			info_label.transform.position.x = ui_camera.width() / 2.0f - info_label.transform.scale.width / 2.0f;
+			info_label.transform.position.y = 256.0f + std::sin((float)ne::ticks() / 100000.0f) * 10.0f;
+			info_label.draw();
+		}
+	}
 
 	// TODO: NPCs need this to be bound in update. 
 	// This should be fixed by having a reference in world or something.

@@ -61,6 +61,8 @@ void game_object_definitions::initialize() {
 	define<item_object>(ITEM_PEAR, "Pear", 0);
 	define<item_object>(ITEM_STRAWBERRY, "Strawberry", 0);
 	define<item_object>(ITEM_GEM, "Gem", 0);
+	define<item_object>(ITEM_BOOTS, "Boots", 0);
+	define<item_object>(ITEM_MACHETE, "Machete", 0);
 
 	// Platforms
 	define<platform_object>(0, "Platform", 0);

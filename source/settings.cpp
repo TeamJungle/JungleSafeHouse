@@ -6,9 +6,9 @@
 #include <platform.hpp>
 #include <memory.hpp>
 
-float settings::music_volume = 1.0f;
-float settings::sound_volume = 1.0f;
-int settings::difficulty = DIFFICULTY_NORMAL;
+float settings::music_volume = 0.6f;
+float settings::sound_volume = 0.6f;
+int settings::difficulty = DIFFICULTY_EASY;
 #if _DEBUG
 bool settings::show_debug = true;
 #else

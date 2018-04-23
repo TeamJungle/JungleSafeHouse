@@ -104,6 +104,21 @@ void texture_assets::initialize() {
 	load({ &objects.machete.flip[left], "flip.png", 8, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
 	load({ &objects.machete.flip[right], "flip.png", 8, TEXTURE_IS_ANIMATED });
 
+	group("objects/player/winged_boots");
+	load({ &objects.boots.idle[left], "idle.png", 1, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
+	load({ &objects.boots.idle[right], "idle.png", 1, TEXTURE_IS_ANIMATED });
+	load({ &objects.boots.run[left], "run.png", 12, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
+	load({ &objects.boots.run[right], "run.png", 12, TEXTURE_IS_ANIMATED });
+	load({ &objects.boots.jump[left], "jump.png", 11, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
+	load({ &objects.boots.jump[right], "jump.png", 11, TEXTURE_IS_ANIMATED });
+	load({ &objects.boots.slide[left], "slide.png", 11, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
+	load({ &objects.boots.slide[right], "slide.png", 11, TEXTURE_IS_ANIMATED });
+	load({ &objects.boots.cut[left], "cut.png", 9, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
+	load({ &objects.boots.cut[right], "cut.png", 9, TEXTURE_IS_ANIMATED });
+	load({ &objects.boots.running_cut[left], "run.png", 12, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
+	load({ &objects.boots.running_cut[right], "run.png", 12, TEXTURE_IS_ANIMATED });
+	load({ &objects.boots.flip[left], "flip.png", 8, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
+	load({ &objects.boots.flip[right], "flip.png", 8, TEXTURE_IS_ANIMATED });
 
 	group("objects/chaser");
 	load({ &objects.chaser.idle[left], "idle.png", 1, TEXTURE_IS_ANIMATED | TEXTURE_FLIP_X });
@@ -124,8 +139,9 @@ void texture_assets::initialize() {
 	load({ &objects.item[ITEM_MANDARIN], "mandarin.png" });
 	load({ &objects.item[ITEM_PEAR], "pear.png" });
 	load({ &objects.item[ITEM_STRAWBERRY], "strawberry.png" });
-	load({ &objects.item[ITEM_GEM], "gem.png",1 });
-
+	load({ &objects.item[ITEM_GEM], "gem.png" });
+	load({ &objects.item[ITEM_BOOTS], "boots.png" });
+	load({ &objects.item[ITEM_MACHETE], "machete.png" });
 
 	group("objects/door");
 	load({ &objects.door.open, "open.png" });
